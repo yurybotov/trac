@@ -63,31 +63,31 @@ http://web.archive.org/web/20050213111043/http://tracfoundation.org
 
 Типовые операции:
 
- присваивание константы   var name = value
+ присваивание константы   var name = value :
  #(ds,name,value)\`
 
- использование переменной  name
+ использование переменной  name :
  #(name)
 
- инкремент переменной  name++
+ инкремент переменной  name++ :
  #(ds,name,#(ad,#(name),1)\`
 
- присваивание результата выражения    name <- expression
+ присваивание результата выражения    name <- expression : 
  #(ds,name,expression)\`
 
- определение функции func name(param1, param2) <- expression
+ определение функции func name(param1, param2) <- expression : 
  #(ds,name,(expression))#(ss,param1,param2)\`
 
- вызов функции    name(param1,param2)
+ вызов функции    name(param1,param2) : 
  #(name,param1,param2)\`
 
- условное ветвление if(condition,trueexpression,falseexpression)
+ условное ветвление if(condition,trueexpression,falseexpression) : 
  #(eq,condition,0,falseexpression,trueexpression)`
 
- цикл по условию while(condition, expression)
+ цикл по условию while(condition, expression) :
  #(ds,tempname,(#(eq,condition,0,expression#(tempname),)))\`#(tempname)\`#(dd,tempname)\`
 
- цикл по счетчику for(startcount,endcount, expression)
+ цикл по счетчику for(startcount,endcount, expression) :
  #(ds,tempvar,(startcount))#(ds,tempname,(#(eq,tempvar,endcount,,expression#(ds,tempvar,#(ad,#(tempvar),1)))#(tempname))))\`#(tempname)\`#(dd,tempvar,tempname)\`
 
 Замечания по текущей реализации на JS:
