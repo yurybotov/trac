@@ -61,8 +61,37 @@ http://web.archive.org/web/20050213111043/http://tracfoundation.org
 \#(ds,печать,(#(ps,X)))#(ss,печать,X))) после выполнени€ этого кода #(печать,русский-текст) напечатает "русский-текст".
 ћакросы и переменные можно сохран€ть на диске а потом загружать обратно в хранилище форм.
 
+“иповые операции:
+
+ присваивание константы   var name = value
+ #(ds,name,value)\`
+
+ использование переменной  name
+ #(name)
+
+ инкремент переменной  name++
+ #(ds,name,#(ad,#(name),1)\`
+
+ присваивание результата выражени€    name <- expression
+ #(ds,name,expression)\`
+
+ определение функции func name(param1, param2) <- expression
+ #(ds,name,(expression))#(ss,param1,param2)\`
+
+ вызов функции    name(param1,param2)
+ #(name,param1,param2)\`
+
+ условное ветвление if(condition,trueexpression,falseexpression)
+ #(eq,condition,0,falseexpression,trueexpression)`
+
+ цикл по условию while(condition, expression)
+ #(ds,tempname,(#(eq,condition,0,expression#(tempname),)))\`#(tempname)\`#(dd,tempname)\`
+
+ цикл по счетчику for(startcount,endcount, expression)
+ #(ds,tempvar,(startcount))#(ds,tempname,(#(eq,tempvar,endcount,,expression#(ds,tempvar,#(ad,#(tempvar),1)))#(tempname))))\`#(tempname)\`#(dd,tempvar,tempname)\`
 
 «амечани€ по текущей реализации на JS:
+- пока не реализованы trace-on и trace-off - не придумал еще как удобнее сделать трассировку
 - не работает и не будет работать сохранение на диск, позднее вместо него организуем хранение в localstorage
 - не работает работа с битами. ћожно конечно потом сделать ее, однако реализаци битовых операций в €зыке не сама€ удачна€ и может быть будет правильнее реализовать их как то по другому.
 - добавлен преобразователь из €зыка простейшего функционального калькул€тора в trac 
