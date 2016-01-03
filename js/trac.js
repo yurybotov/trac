@@ -585,3 +585,51 @@ var $ = this.u$;
 
 var macro = new Macro();
 var calc = new Calc();
+
+function go() {
+    $('#content').html(macro.run($('#source').get().value));
+};
+
+// программа тестирования интерпретатора
+
+//+ #(ps,#(rs))`прочитали строку rs<br>`#(ps,#(rc))`Прочитали символ rc<br>`#(cm,^)`#(ps,#(rs))^Поменяли мету<br>#(cm,`)^#(ps,#(rs))`вернули мету на место<br>`
+//+ #(ds,arr,1:2:3:4:5)#(ss,arr,:)`#(ps,#(cs,arr))`#(ps,#(cs,arr))`#(ps,#(cs,arr))`#(ps,#(cs,arr))`#(ps,#(cs,arr))`#(ps,#(cs,arr,err))`
+//+ #(ds,+,(#(ad,p1,p2)))#(ss,+,p1,p2)`#(ps,#(cl,+,2,3))`#(ps,#(+,2,3))`
+//+ #(ds,str,string)#(ss,str,i)`#(ps,#(cc,str))`#(ps,#(cc,str))`#(ps,#(cc,str))`#(ps,#(cc,str))`#(ps,#(cc,str))`#(ps,#(cc,str))`#(ps,#(cc,str,err))`
+//+ #(ds,Factorial,(#(eq,1,X,1,(#(ml,X,#(cl,Factorial,#(ad,X,-1)))))))#(ss,Factorial,X)`#(cl,Factorial,5)`
+//+ 1+1=`#(ad,1,1)` 2-1=`#(su,2,1)` 2-4=`#(su,2,4)` 2*4=`#(ml,2,4)` 6/2=`#(dv,6,2,?)` 5/2=`#(dv,5,2,?)` 6/0=`#(dv,6,0,?)`
+//+ проверка условий:`#(eq,11,11,ok,not)` #(eq,11,12,not,ok)` #(gr,11,12,not,ok)`  #(gr,12,11,ok,not)`  
+//+ управление` #(np)#(np,123)#(np,#(ad,1,1))`#(hl)`это не должно быть видно`
+//+ #(ds,test,(#(ad,1,1)))`функции` #(ps,(#(cl,test)))` #(ps,#(cl,test))` #(ps,##(cl,test))` 
+//+ #(ds,test,(#(ad,1,1)))`сохранение` #(sb,local,test)` #(ps,##(cl,test))`#(fb,local)` #(ps,##(cl,test))`#(eb,local)` #(da)`#(fb,local)` #(ps,##(cl,test))`
+
+/* Типовые операции
+
+ присваивание константы   var name = value
+ #(ds,name,value)`
+
+ использование переменной  name
+ #(name)
+
+ инкремент переменной  name++
+ #(ds,name,#(ad,#(name),1)`
+
+ присваивание результата выражения    name <- expression
+ #(ds,name,expression)`
+
+ определение функции func name(param1, param2) <- expression
+ #(ds,name,(expression))#(ss,param1,param2)`
+
+ вызов функции    name(param1,param2)
+ #(name,param1,param2)`
+
+ условное ветвление if(condition,trueexpression,falseexpression)
+ #(eq,condition,0,falseexpression,trueexpression)`
+
+ цикл по условию while(condition, expression)
+ #(ds,tempname,(#(eq,condition,0,expression#(tempname),)))`#(tempname)`#(dd,tempname)`
+
+ цикл по счетчику for(startcount,endcount, expression)
+ #(ds,tempvar,(startcount))#(ds,tempname,(#(eq,tempvar,endcount,,expression#(ds,tempvar,#(ad,#(tempvar),1)))#(tempname))))`#(tempname)`#(dd,tempvar,tempname)`
+
+ */
