@@ -1,31 +1,5 @@
-/*
-  Trac interpreter
-
- "Железное" исполнение интерпретатора Trac
-
- Железо: модуль ESP8266 (ESP-12E)с минимальной обвязкой.
- Например NodeMCU 0.9, 1.0, WeMos D1 и другие
-
-
- создано 25 Июня 2016
- последнее изменение 28 Июня 2016
- Юрий Ботов
-
- Код - public domain.
-
- */
-
-#include <ArduinoJson.h>
 #include <FS.h>
-#include "lib.h"
-
-struct form {
-  int hash;
-  char name[8];
-  char* value;
-  int ptr;
-  int css;
-};
+#include "trac.h"
 
 const char NEXTPARAM = (char)17;
 const char ACTIVEFUNC = (char)18;
@@ -35,139 +9,38 @@ char* idle = "#(ps,#(rs))"; // interpret init string
 char meta = '`'; // interpret meta
 bool z = false; // function output type
 bool runned = false;
-RingBuf& I = *new RingBuf(2048);
-RingBuf& A = *new RingBuf(2048);
-RingBuf& N = *new RingBuf(2048);
-RingBuf& O = *new RingBuf(2048);
-RingBuf& F = *new RingBuf(2048);
+char curIterm = 't'; // f
+char curOterm = 't';
+char curInet = 't'; // f
+char curOnet = 't';
+char* curItermfilename;
+char* curOtermfilename;
+char* curInetfilename;
+char* curOnetfilename;
+RingBuf& Ifile = *new RingBuf(512);
+RingBuf& A = *new RingBuf(512);
+RingBuf& N = *new RingBuf(512);
+RingBuf& Ofile = *new RingBuf(512);
+RingBuf& F = *new RingBuf(512);
 bool isready = false; // input string ready in input buffer (meta exists)
 struct form forms[255];
-int formlength = 0;
-/*
-bool loadConfig() {
-  File configFile = SPIFFS.open("/settings.json", "r");
-  if (!configFile) {
-    // make new config
-    StaticJsonBuffer<200> jsonBuffer;
-    JsonObject& json = jsonBuffer.createObject();
-    json["idle"] = "#(ps,#(rs))";
-    json["meta"] = '`';
-    //json["isize"] = 2048;
-    //json["asize"] = 2048;
-    //json["nsize"] = 2048;
-    //json["osize"] = 2048;
-  
-    File configFile = SPIFFS.open("/settings.json", "w");
-    if (!configFile) {
-      Serial.println("Failed to create config file");
-      return false;
-    } 
-    json.printTo(configFile);
-  }
-  Serial.print("settings.json exists. Size is: ");
-  size_t size = configFile.size();
-  Serial.print(size); Serial.print(" bytes...");
-
-  // Allocate a buffer to store contents of the file.
-  std::unique_ptr<char[]> buf(new char[size]);
-
-  // We don't use String here because ArduinoJson library requires the input
-  // buffer to be mutable. If you don't use ArduinoJson, you may as well
-  // use configFile.readString instead.
-  configFile.readBytes(buf.get(), size);
-  Serial.print("loaded...");
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& json = jsonBuffer.parseObject(buf.get());
-
-  if (!json.success()) {
-    Serial.println("\nFailed to parse config file");
-    return false;
-  } else Serial.print("parsed...");
-  Serial.print("\n");
-  idle = json["idle"]; Serial.print("idle = "); Serial.println(idle); 
-  meta = json["meta"]; Serial.print("meta = "); Serial.println(meta); 
-  //isize = json["isize"]; Serial.print("isize = "); Serial.println(isize); 
-  //asize = json["asize"]; Serial.print("asize = "); Serial.println(asize); 
-  //nsize = json["nsize"]; Serial.print("nsize = "); Serial.println(nsize); 
-  //osize = json["osize"]; Serial.print("osize = "); Serial.println(osize); 
-  runned = true;
-  return true;
-}
-
-bool saveConfig() {
-  StaticJsonBuffer<200> jsonBuffer;
-  JsonObject& json = jsonBuffer.createObject();
-  json["idle"] = idle;
-  json["meta"] = meta;
-  //json["isize"] = isize;
-  //json["asize"] = asize;
-  //json["nsize"] = nsize;
-  //json["osize"] = osize;
-
-  File configFile = SPIFFS.open("/settings.json", "w");
-  if (!configFile) {
-    Serial.println("Failed to open config file for writing");
-    return false;
-  }
-
-  json.printTo(configFile);
-  return true;
-}
-*/
-// system setup
-void setup() {
-  // init Serial
-  Serial.begin(115200);
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-    delay(100);
-  }
-  Serial.println("\n\n\n\nESP8266 Trac interpreter");
-  Serial.println("\nInit Serial as 115200 baud");
-  // init SD and FS
-  Serial.print("Initializing SPIFFS...");
-  if (!SPIFFS.begin()) {
-    Serial.println("Failed to mount file system");
-    return;
-  }
-  //if(SPIFFS.format()) { Serial.println("SPIFFS formatted"); } else { Serial.println("SPIFFS format error"); return;}
-  struct FSInfo i;
-  SPIFFS.info(i);
-  delay(1);
-  Serial.println("");  Serial.print(i.totalBytes);  Serial.println(": total bytes in SPIFFS");
-  Serial.print(i.usedBytes); Serial.println(": used bytes in SPIFFS");
-  //if(loadConfig()) Serial.println("Configuration loaded");
-  A.push(idle);
-  z = false;
-  Serial.print("\nTRAC:"); Serial.print(ESP.getFreeHeap());Serial.print(":>");
-}
-
-void dbg() {
-  Serial.println("---------------------------------------------------------------------------------------------------------------");
-  //Serial.print("i : "); Serial.println(inbuf);
-  //Serial.print("a : "); Serial.println(a);
-  //Serial.print("n : "); Serial.println(n);
-  //Serial.print("o : "); Serial.println(outbuf);
-  Serial.println("---------------------------------------------------------------------------------------------------------------");
-}
+uint8_t formlength = 0;
+struct user users[MAX_SRV_CLIENTS];
+uint8_t curuser = 0;
 
 char* loads() {
   char* s;
-  int metaptr = I.indexof(meta);
+  int metaptr = users[curuser].I->indexof(meta);
   if(metaptr != -1) {
-    if(metaptr != I.length()) {
-      s = I.cutstart(metaptr-1);
-      I.dropfirst();
-    } else {
-      s = I.asstring();
-    }
+    s = users[curuser].I->cutstart(metaptr-1);
+    users[curuser].I->dropfirst();
     return s;
   } else 
   return NULL;
 }
 
 char loadc() {
-  return I.get();
+  return users[curuser].I->get();
 }
 
 char* formcall(char* fst, char* oth) {
@@ -185,7 +58,7 @@ int hash(char* s) {
 int findform(char* n) {
   int h = hash(n), res = -1;
   for(int i = 0; i < formlength; i++) {
-    if( forms[i].hash == h && !strncmp(forms[i].name, n, 8)) {res = i; break;}
+    if( forms[i].owner == curuser && forms[i].hash == h && !strncmp(forms[i].name, n, 8)) {res = i; break;}
   }
   return res;
 }
@@ -201,6 +74,7 @@ int formadd(char* fname, char* fform) {
       forms[ref].value = fform;
       forms[ref].ptr = 0;
       forms[ref].css = 0;
+      forms[ref].owner = curuser;
       // если форма с таким именем есть - заменяем ее
     } else {
       // если формы с таким именем нет - создаем новую      
@@ -210,50 +84,12 @@ int formadd(char* fname, char* fform) {
       f->value = fform;
       f->ptr = 0;
       f->css = 0;
+      f->owner = curuser;
       formlength++;
     }
   }
 }
 
-/*
-char* firstParam(char* s) {
-  int sl = strlen(s);
-  int l = -1;
-  for(int i = 0; i < sl; i++) {
-    if(s[i]==NEXTPARAM) {l = i; break;}
-  }
-  if(l == sl) {
-    return s;
-  } else {
-    char* o = new char(l+1);
-    int i;
-    for(i = 0; i < l; i++) {
-      o[i] = s[i];
-    }
-    o[i] = (char)0;
-    return o;
-  }
-} 
-
-char* otherParams(char* s) { 
-  int sl = strlen(s);
-  int l = -1;
-  for(int i = 0; i < sl; i++) {
-    if(s[i]==NEXTPARAM) {l = i; break;}
-  }
-  if(l == sl) {
-    return "";
-  } else {
-    char* o = new char(sl-l+1);
-    int i;
-    for(i = 0; i < sl-l; i++) {
-      o[i] = s[i+l];
-    }
-    o[i] = (char)0;
-    return o;
-  }
-}
-*/
 // возвращает строку параметра с номером n
 char* param(char* start, int n) {
   char *bgn = start, *en;
@@ -301,7 +137,7 @@ void start(int fstart) {
   // #(ps,S) - отправляет S на текущее устройство вывода
   if(!strcmp(first,"ps")) { 
     ptr = param(f,1); 
-    O.push(ptr); 
+    users[curuser].O->push(ptr); 
     if(ptr !=NULL) delete ptr; 
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
@@ -371,7 +207,7 @@ void start(int fstart) {
   // #(da) - удаление всех форм 
   if(!strcmp(first,"da")) { 
     for(int i = 0; i < formlength; i++) {
-      delete forms[i].value;
+      delete forms[i].value;///////////////////////////////////////////////////////////////////
     }
     formlength = 0;
     if( f != NULL) delete f; if( first != NULL) delete first; return;
@@ -548,6 +384,10 @@ void start(int fstart) {
     z = false; 
     if( f != NULL) delete f; if( first != NULL) delete first;  return;
   }
+  // #(rt) - жестко рестартует весь контроллер
+  if(!strcmp(first,"rt")) { 
+    ESP.reset();
+  }
   // #(np,S)- нет операции, можно использовать для комментирования кода S
   if(!strcmp(first,"np")) { 
      if( f != NULL) delete f;  if( first != NULL) delete first; return;
@@ -568,6 +408,23 @@ void start(int fstart) {
  // TODO -----------------------------------------
  // #(so[,N]) - подключить подсистему вывода к файлу с именем N, если #(so) - стандартный вывод на терминал
  // TODO -----------------------------------------
+ 
+  // пользователи
+  // #(us,n) - сделать текущим пользователем пользователя с номером n
+  if(!strcmp(first,"us")) { 
+    ptr = param(f,1); 
+    curuser = strtol(ptr,NULL,10); 
+    if(ptr != NULL) delete ptr;
+    if( f != NULL) delete f; if( first != NULL) delete first; 
+    return;
+  }
+ // #(un) - вернуть имя текщего пользователя
+  if(!strcmp(first,"un")) { 
+    F.push(users[curuser].name);
+    if( f != NULL) delete f; if( first != NULL) delete first; 
+    return;
+  }
+ 
  // отладка
  // #(tr) - начать трассировку
  // TODO -----------------------------------------
@@ -725,55 +582,3 @@ void interpret() {
     }
   }
 }
-
-// main arduino loop
-void loop() {
-  char* ptr;
-  // проверяем состояние интерпретатора: работает или ожидает входных данных
-  if(runned) {
-    // если работает
-    // освободить выходной буфер выдав его содержимое на устройство вывода
-    if(O.length() > 0) {
-      ptr = O.asstring();
-      Serial.print(ptr);
-      if(ptr != NULL) delete ptr;
-    }
-    // если что то есть на устройстве ввода - поместить это во входной буфер
-    if(Serial.available()) {
-      while (Serial.available()) {
-        I.push((char)Serial.read());   
-      }
-    }
-    // если в активной цепочке ничего нет, а во входном буфере нет заключительной литеры команды (meta)
-    if(A.length() == 0 && I.indexof(meta) == -1) {
-      // переходим в режим ожидания
-      Serial.print("\nTRAC:"); Serial.print(ESP.getFreeHeap());Serial.print(":>");
-      runned = false;
-    } else {
-      // иначе интерпретируем дальше
-      interpret();
-    }
-  } else {  
-    // в режиме ожидания
-    // если что то есть на устройстве ввода - поместить это во входной буфер 
-    if(Serial.available()) {
-      while (Serial.available()) {
-        I.push((char)Serial.read());
-      }       
-    }
-    // если во входном буфере появился символ meta - переходим в рабочий режим
-    if(I.indexof(meta) >= 0) {
-      N.clear();
-      A.push(idle);
-      z = false;
-      runned = true;
-      Serial.print("\n");
-    }
-  }
-}
-
-void Error(char* s){
-  Serial.print("Error: "); Serial.println(s);
-} 
-
-
