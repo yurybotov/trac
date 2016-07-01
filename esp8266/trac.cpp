@@ -111,31 +111,31 @@ void start(int fstart) {
   char* first = param(f,0);
   // общий ввод вывод
   // #(rs[,Z]) - читает строку из входного потока до первого встреченного метасимвола, метасимвол удаляется из потока, если на устройстве ввода ошибка - возвращает Z
-  if(!strcmp(first,"rs")) { 
+  if(!strcmp(first,"rs")||!strcmp(first,"read")) { 
     ptr = loads(); 
     F.push(ptr); 
     if(ptr !=NULL) delete ptr; 
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(rc[,Z]) - читает один символ из потока, любой, включая метасимвол, если на устройстве ввода ошибка - возвращает Z
-  if(!strcmp(first,"rc")) { 
+  if(!strcmp(first,"rc")||!strcmp(first,"getchar")) { 
     F.push(loadc()); 
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(gm) - возвращает текущий метасимвол
-  if(!strcmp(first,"gm")) { 
+  if(!strcmp(first,"gm")||!strcmp(first,"meta")) { 
     F.push(meta); 
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(cm,C) - заменяет системный метасимвол на символ С
-  if(!strcmp(first,"cm")) { 
+  if(!strcmp(first,"cm")||!strcmp(first,"setmeta")) { 
     ptr = param(f,1); 
     meta = ptr[0]; 
     if(ptr !=NULL) delete ptr; 
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(ps,S) - отправляет S на текущее устройство вывода
-  if(!strcmp(first,"ps")) { 
+  if(!strcmp(first,"ps")||!strcmp(first,"print")) { 
     ptr = param(f,1); 
     users[curuser].O->push(ptr); 
     if(ptr !=NULL) delete ptr; 
@@ -146,7 +146,7 @@ void start(int fstart) {
   
   // работа с формами: пользовательские функции, массивы и т.п.
   // #(ds,N,F) - создает форму с именем N и значением F
-  if(!strcmp(first,"ds")) { 
+  if(!strcmp(first,"ds")||!strcmp(first,"define")) { 
     ptr = param(f,1); ptr1 = param(f,2);
     formadd( ptr, ptr1);
     if(ptr != NULL) delete ptr; /*if(ptr1 != NULL) delete ptr1;*/
@@ -168,7 +168,7 @@ void start(int fstart) {
   // TODO -----------------------------------------
 //case 'cn': case 'символы': this.funcvalue = this.formcallchrs(this.get(s, 1), this.get(s, 2), this.get(s, 3)); return;
   // #(fd,N,S[,Z]) - перемещение внутреннего указателя в форме N на начало найденной в форме подстроки S
-  if(!strcmp(first,"fd")) { 
+  if(!strcmp(first,"fd")||!strcmp(first,"findpos")) { 
     ptr = param(f,1); ptr1 = param(f,2);
     int ref = findform(ptr);
     if(ref != -1) { 
@@ -179,7 +179,7 @@ void start(int fstart) {
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(сr,N) - обнуление внутреннего указателя в форме N
-  if(!strcmp(first,"cr")) { 
+  if(!strcmp(first,"cr")||!strcmp(first,"clearpos")) { 
     ptr = param(f,1);
     int ref = findform(ptr);
     if(ref != -1) { forms[ref].ptr = 0; }
@@ -187,7 +187,7 @@ void start(int fstart) {
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(dd,N) - удаление формы N
-  if(!strcmp(first,"dd")) { 
+  if(!strcmp(first,"dd")||!strcmp(first,"delete")) { 
     ptr = param(f,1);
     int ref = findform(ptr);
     if(ref != -1) {
@@ -205,9 +205,9 @@ void start(int fstart) {
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
   // #(da) - удаление всех форм 
-  if(!strcmp(first,"da")) { 
+  if(!strcmp(first,"da")||!strcmp(first,"delall")) { 
     for(int i = 0; i < formlength; i++) {
-      delete forms[i].value;///////////////////////////////////////////////////////////////////
+      delete forms[i].value;////// сделать чтобы удалялся только свой код!
     }
     formlength = 0;
     if( f != NULL) delete f; if( first != NULL) delete first; return;
@@ -378,18 +378,18 @@ void start(int fstart) {
     return;
   }
   // #(hl) - остановить программу, по сути рестартует интерпретатор
-  if(!strcmp(first,"hl")) { 
+  if(!strcmp(first,"hl")||!strcmp(first,"halt")) { 
     N.clear(); 
     A.push(idle); 
     z = false; 
     if( f != NULL) delete f; if( first != NULL) delete first;  return;
   }
   // #(rt) - жестко рестартует весь контроллер
-  if(!strcmp(first,"rt")) { 
+  if(!strcmp(first,"rt")||!strcmp(first,"reset")) { 
     ESP.reset();
   }
   // #(np,S)- нет операции, можно использовать для комментирования кода S
-  if(!strcmp(first,"np")) { 
+  if(!strcmp(first,"np")||!strcmp(first,"nop")) { 
      if( f != NULL) delete f;  if( first != NULL) delete first; return;
   }
   
@@ -411,7 +411,7 @@ void start(int fstart) {
  
   // пользователи
   // #(us,n) - сделать текущим пользователем пользователя с номером n
-  if(!strcmp(first,"us")) { 
+  if(!strcmp(first,"us")||!strcmp(first,"setuser")) { 
     ptr = param(f,1); 
     curuser = strtol(ptr,NULL,10); 
     if(ptr != NULL) delete ptr;
@@ -419,7 +419,7 @@ void start(int fstart) {
     return;
   }
  // #(un) - вернуть имя текщего пользователя
-  if(!strcmp(first,"un")) { 
+  if(!strcmp(first,"un")||!strcmp(first,"user")) { 
     F.push(users[curuser].name);
     if( f != NULL) delete f; if( first != NULL) delete first; 
     return;
@@ -431,7 +431,7 @@ void start(int fstart) {
  // #(tf) - закончить трассировку
  // TODO -----------------------------------------
  // #(nl[,S]) - возвращает список имен имеющихся форм, S - делимитер между именами форм
-  if(!strcmp(first,"nl")) { 
+  if(!strcmp(first,"nl")||!strcmp(first,"varlist")) { 
     ptr = param(f,1);
     char dl = (ptr == NULL)? ' ' : ptr[0];
     for(int i = 0; i < formlength; i++) {
@@ -442,7 +442,7 @@ void start(int fstart) {
     if( f != NULL) delete f; if( first != NULL) delete first; return;
   }
  // #(pb,S) - возвращает содержимое формы с именем S
-  if(!strcmp(first,"pb")) { 
+  if(!strcmp(first,"pb")||!strcmp(first,"varshow")) { 
     ptr = param(f,1);
     int ref = findform(ptr);
     if(ref != -1) { F.push(forms[ref].value); }
@@ -466,8 +466,6 @@ void start(int fstart) {
             case 'as': case 'длинамассива': break;
             case 'rx': case 'основание': break;
                 // file io
-            case 'si': case 'входфайл': break;
-            case 'so': case 'выходфайл': break;
             case 'rp': case 'переместитьуказатель': break;
             case 'gp': case 'значениеуказателя': break;
 

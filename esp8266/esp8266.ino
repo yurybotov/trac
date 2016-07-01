@@ -3,12 +3,12 @@
 
  "Железное" исполнение интерпретатора Trac
 
- Железо: модуль ESP8266 (ESP-12E)с минимальной обвязкой.
- Например NodeMCU 0.9, 1.0, WeMos D1 и другие
+ Железо: модуль ESP8266 (ESP-12x)с минимальной обвязкой.
+ Например NodeMCU 0.9, 1.0, WeMos D1, "Бутерброд" и другие
 
 
  создано 25 Июня 2016
- последнее изменение 28 Июня 2016
+ последнее изменение 1 Июля 2016
  Юрий Ботов
 
  Код - public domain.
@@ -35,7 +35,7 @@ void newsec() {
 // раскомментируйте ssid и password и заполните своими данными, а #include "d:\wifipass.h" - закомментируйте или удалите
 //const char* ssid = "********";
 //const char* password = "********";
-#include "d:\wifipass.h" // мои спрятанные ssid и password
+#include "d:\wifipass.h" // мои ssid и password
 
 WiFiServer TelnetServer(23);
 WiFiClient Telnet;
@@ -111,7 +111,7 @@ void setup() {
   users[0].ifile = NULL;
   users[0].ofile = NULL;
   users[0].lastuse = seccounter;
-  users[0].I = new RingBuf(256);
+  users[0].I = new RingBuf(512);
   users[0].O = NULL;
   Serial.println("Create system user: tracsys");
   // локальный пользователь local
@@ -122,8 +122,8 @@ void setup() {
   users[1].ifile = NULL;
   users[1].ofile = NULL;
   users[1].lastuse = seccounter;
-  users[1].I = new RingBuf(512);
-  users[1].O = new RingBuf(512);
+  users[1].I = new RingBuf(1024);
+  users[1].O = new RingBuf(1024);
   Serial.println("Create local user: local");
   // сетевой пользователь net
   users[2].name = "net";
@@ -133,22 +133,11 @@ void setup() {
   users[2].ifile = NULL;
   users[2].ofile = NULL;
   users[2].lastuse = seccounter;
-  users[2].I = new RingBuf(512);
-  users[2].O = new RingBuf(512);
+  users[2].I = new RingBuf(1024);
+  users[2].O = new RingBuf(1024);
   Serial.println("Create net user: net");
-  // узнаем имя
-  //Serial.print("\nLogin:");
-  //Serial.setTimeout(600000);
-  //String login = Serial.readStringUntil('\n');
-  //users[2].status = 'n';
-  //users[3].status = 'n';
-  //users[4].status = 'n';
-  //users[5].status = 'n';
-
-  //A.push("#(us,0)");
   A.push(idle);
   z = false;
-  //Serial.setTimeout(1000);
   // поехали!
   Serial.print("\nReady to connecting...\n\n");
   Serial.print("\nlocal:"); Serial.print(ESP.getFreeHeap());Serial.print(":>");
@@ -156,7 +145,7 @@ void setup() {
 
 // обработчики прерываний
 /*
-если пришло прерывание - положить это в Iint.push();
+если пришло прерывание - положить что-то в users[0].I->push("что-то");
 */
 
 bool ifmeta() {
@@ -174,7 +163,7 @@ void loop() {
     if (!Telnet || !Telnet.connected()){
       if(Telnet) Telnet.stop();
       Telnet = TelnetServer.available();
-      if (Telnet && Telnet.connected()){Telnet.print("\n\rnet:"); Telnet.print(ESP.getFreeHeap());Telnet.print(":>");}
+      if (Telnet && Telnet.connected()){Telnet.print("Trac interpreter\n\r"); Telnet.print("\n\rnet:"); Telnet.print(ESP.getFreeHeap());Telnet.print(":>");}
     } else {
       TelnetServer.available().stop();
     }
@@ -237,7 +226,7 @@ void loop() {
           z = false;
           runned = true;
           if(curuser == 1) {
-  //          Serial.print("\n");
+            Serial.print("\n");
           } else {
   //          if (Telnet && Telnet.connected()){ Telnet.print("\n\r");}
           }
