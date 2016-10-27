@@ -1,9 +1,10 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
+#include <cstring>
+#include <new>
 #endif
 
-#include "lib.h"
-#include <string.h>
+#include "ringbuf.h"
 
 /*void dumb(void) {
 #ifdef __DBG__
@@ -14,14 +15,14 @@
 RingBuf::RingBuf(int sz)
 {
 	size = sz;
-	buf = new char[size];
+	buf = new (std::nothrow) char[size];
 	//overflow = underflow = &dumb;
 	clear();
 }
 
 RingBuf::~RingBuf(void)
 {
-	delete buf;
+	delete[] buf;
 }
 
 void RingBuf::clear(void)
@@ -150,9 +151,9 @@ char* RingBuf::asstring() {
   return s;
 }
 
-void Error(char* s);
+//void Error(char* s);
 
-void RingBuf::error(char* s)
+void RingBuf::error(const char* s)
 {
-	Error(s);
+	//Error(s);
 }

@@ -3,8 +3,8 @@
 //
 
 
-#ifndef __LIB_H__
-#define __LIB_H__
+#ifndef __RINGBUF_H__
+#define __RINGBUF_H__
 
 class RingBuf {
 public:
@@ -42,7 +42,7 @@ private:
 	int size;
 	//void (*overflow)();
 	//void (*underflow)();
-	void error(char* s);
+	void error(const char* s);
 };
 
 #endif // __LIB_H__

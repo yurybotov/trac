@@ -3,10 +3,9 @@
 
 class TracLib {
   public:
-	inline TrackLib() {};
-        inline ~TrackLib() {}; 
+	inline TracLib() {};
+	inline ~TracLib() {};
 
- 
 };
 
 #endif // __TRACLIB_H__

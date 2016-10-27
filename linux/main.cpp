@@ -1,5 +1,5 @@
 #include "projectcfg.h"
-#include "interpret.h"
+#include "../libs/interpret.h"
 
 int main(int argc, char** argv)
 {

@@ -1,24 +1,24 @@
-
 TARGET = tracinterpret
 PREFIX = /usr/local/bin
+C = g++
 
 .PHONY: all clean install uninstall
 
 all: $(TARGET)
 	
 clean:
-			rm -rf $(TARGET) *.o
-main.o: main.c
-			gcc -c -o main.o main.c
-interpret.o: interpret.c
-			gcc -c -o interpret.o ../libs/interpret.c
-ringbuf.o: ringbuf.c
-			gcc -c -o ringbuf.o ../libs/ringbuf.c
-traclib.o: traclib.c
-			gcc -c -o traclib.o ../libs/traclib.c
-$(TARGET): main.o interpret.o ringbuf.o
-			gcc -o $(TARGET) main.o interpret.o ringbuf.o
+	rm -rf $(TARGET) *.o
+main.o: main.cpp
+	$(C) -c -o main.o main.cpp
+interpret.o: ../libs/interpret.cpp
+	$(C) -c -o interpret.o ../libs/interpret.cpp
+ringbuf.o: ../libs/ringbuf.cpp
+	$(C) -c -o ringbuf.o ../libs/ringbuf.cpp
+traclib.o: ../libs/traclib.cpp
+	$(C) -c -o traclib.o ../libs/traclib.cpp
+$(TARGET): main.o interpret.o ringbuf.o traclib.o
+	$(C) -o $(TARGET) main.o interpret.o ringbuf.o traclib.o
 install:
-			install $(TARGET) $(PREFIX)
+	install $(TARGET) $(PREFIX)
 uninstall:
-			rm -rf $(PREFIX)/$(TARGET)
+	rm -rf $(PREFIX)/$(TARGET)
