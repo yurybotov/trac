@@ -53,7 +53,7 @@
 #endif // TARGET == ESP8266
 
 #if CHARSIZE == ANSI
-typedef litera		uint8_t;
+typedef uint8_t		litera;
 #define NEXTPARAM	((litera)17)
 #define ACTIVEFUN	((litera)18)
 #define NEYTRALFUN	((litera)19)
@@ -61,7 +61,7 @@ typedef litera		uint8_t;
 #endif
 
 #if CHARSIZE == UNICODE
-typedef litera		uint16_t;
+typedef uint16_t	litera;
 #define NEXTPARAM	((litera)0xee17)
 #define ACTIVEFUN	((litera)0xee18)
 #define NEYTRALFUN	((litera)0xee19)
