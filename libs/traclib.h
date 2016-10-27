@@ -3,8 +3,8 @@
 
 class TracLib {
   public:
-	inline TracLib() {};
-	inline ~TracLib() {};
+	inline TracLib(void) {};
+	inline ~TracLib(void) {};
 
 };
 

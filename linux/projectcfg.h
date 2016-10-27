@@ -23,46 +23,49 @@
 
 #if TARGET == LINUX
 // размер файлового буфера
-#define FBUFFSIZE	2048
+#define FBUFSIZE	2048
 // размер входного буфера
-#define IBUFFSIZE	2048
+#define IBUFSIZE	2048
 // размер активного буфера
-#define ABUFFSIZE	2048
-// размер пассивного буфера
-#define PBUFFSIZE	2048
+#define ABUFSIZE	2048
+// размер нейтрального буфера
+#define NBUFSIZE	2048
 // размер выходного буфера
-#define OBUFFSIZE	2048
+#define OBUFSIZE	2048
 // максимальное количество форм
 #define MAXFORMS	1024
+#include <stdint.h>
 #endif // TARGET == LINUX
 
 #if TARGET == ESP8266
 // размер файлового буфера
-#define FBUFFSIZE	512
+#define FBUFSIZE	512
 // размер входного буфера
-#define IBUFFSIZE	512
+#define IBUFSIZE	512
 // размер активного буфера
-#define ABUFFSIZE	512
+#define ABUFSIZE	512
 // размер пассивного буфера
-#define PBUFFSIZE	512
-// размер выходного буфера
-#define OBUFFSIZE	512
+#define NBUFSIZE	512
+// размер нейтрального буфера
+#define OBUFSIZE	512
 // максимальное количество форм
 #define MAXFORMS	256
 #endif // TARGET == ESP8266
 
 #if CHARSIZE == ANSI
-#define NEXTPARAM	((char)17)
-#define ACTIVEFUN	((char)18)
-#define NEYTRALFUN	((char)19)
-#define ENDFUN		((char)20)
+typedef litera		uint8_t;
+#define NEXTPARAM	((litera)17)
+#define ACTIVEFUN	((litera)18)
+#define NEYTRALFUN	((litera)19)
+#define ENDFUN		((litera)20)
 #endif
 
 #if CHARSIZE == UNICODE
-#define NEXTPARAM	(0xee17)
-#define ACTIVEFUN	(0xee18)
-#define NEYTRALFUN	(0xee19)
-#define ENDFUN		(0xee20)
+typedef litera		uint16_t;
+#define NEXTPARAM	((litera)0xee17)
+#define ACTIVEFUN	((litera)0xee18)
+#define NEYTRALFUN	((litera)0xee19)
+#define ENDFUN		((litera)0xee20)
 #endif
 
 
