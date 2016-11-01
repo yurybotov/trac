@@ -18,6 +18,7 @@ litera* litncpy(litera* d, litera* s, int n);
 int litcmp(litera* d, litera* s);
 int litncmp(litera* d, litera* s, int n);
 int litcpy(litera* d, litera* s);
-int litlit(litera* s, litera* sub);
+litera* litlit(litera* s, litera* sub);
+litera* litchr(litera* s, litera c);
 
 #endif

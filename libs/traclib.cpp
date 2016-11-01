@@ -17,8 +17,43 @@ litera* loads() {
   return NULL;
 }
 
-litera* formcall(litera* fst, litera* oth) {
-   return NULL;                                       // TODO!!!!!!!!!!!!!!!!
+void replaceall( litera* s, litera* find, litera* replace) {
+  RingBuf& tmp = *new RingBuf(NBUFSIZE);
+  for(int i = 0; i < litlen(s); i++) {
+    if(s[i] == f[0]) {
+      bool have = true;
+      for(int j = 1; j < litlen(find); j++) {
+        have &= s[i+j-1] == find[j];
+        if(!have) break;
+      }
+      if(have) {
+        tmp.push(replace);
+        i += litlen(find)-1;
+      } else {
+        tmp.push(s[i]);
+      }
+    } else {
+      tmp.push(s[i]);
+    }
+  }
+  delete s;
+  s = temp.asstring();
+}
+
+litera* formcall(litera* fst, litera* f) {
+  int ref = findform(fst);
+  if(ref != -1) {
+    for(int i = 0; i < litlen(F[ref].value); i++) {
+      if( F[ref].value[i] == FORMBREAK) {
+        litera* ptr = param(f,(int)F[ref].value[i+1]);
+        R.push(ptr);
+        if(ptr != NULL) delete ptr;
+        i++;
+      } else {
+        R.push(F[ref].value[i]);
+      }
+    }
+  }
 }
 
 // вычисляет хэш для формы
@@ -73,14 +108,12 @@ void rt(litera* f) {     // TODO в разных сборках по разно�
   N.clear();
   A.push(idle);
   z = false;
-  return;
 }
 // #(hl) остановка
 void hl(litera* f) {
   N.clear();
   A.push(idle);
   z = false;
-  return;
 }
 // #(eq,a,b,than,else) сравнение если a == b
 void eq(litera* f) {
@@ -95,7 +128,6 @@ void eq(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(ptr2 != NULL) delete ptr2;
-  return;
 }
 // #(gr,a,b,than,else) сравнение если a > b
 void gr(litera* f) {
@@ -110,7 +142,6 @@ void gr(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(ptr2 != NULL) delete ptr2;
-  return;
 }
 // #(lt,a,b,than,else) сравнение если a < b
 void lt(litera* f) {
@@ -125,7 +156,6 @@ void lt(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(ptr2 != NULL) delete ptr2;
-  return;
 }
 
 //// Ввод-вывод
@@ -133,14 +163,12 @@ void lt(litera* f) {
 // #(gm) возвращает текущий символ мета
 void gm(litera* f) {
   R.push(meta);
-  return;
 }
 // #(cm) заменяет текущий символ мета. Возвращает пустую строку
 void cm(litera* f) {
   litera* ptr = param(f,1);
   meta = ptr[0];
   if( ptr != NULL) delete ptr;
-  return;
 }
 // #(rs,Z) читает из входного буфера строку от начала до символа мета и
 // переносит ее в конец активной цепочки. Мету из буфера выкидываем. Если все
@@ -155,7 +183,6 @@ void rs(litera* f) {
     R.push(ptr);
   }
   if( ptr != NULL) delete ptr;
-  return;
 }
 // #(rc,Z) читает из входного буфера один символ. Любой, включая мету.
 // Возвращает этот символ или Z если ошибка
@@ -168,14 +195,12 @@ void rc(litera* f) {
     R.push(ptr);
     if( ptr != NULL) delete ptr;
   }
-  return;
 }
 // #(ps,s) отправляет строку на текущее устройство вывода
 void ps(litera* f) {
   litera* ptr = param(f,1);
   O.push(ptr);
   if(ptr !=NULL) delete ptr;
-  return;
 }
 // #(si,f) подключить подсистему ввода к файлу с именем f,
 // если #(si) - стандартный ввод из терминала. Возвращает пустую строку.
@@ -186,8 +211,8 @@ void si(litera* f) {
   } else {
     litcpy(in,"stdin");
   }
+  inoffset = 0;
   if(ptr !=NULL) delete ptr;
-  return;
 }
 // #(so,f) подключить подсистему вывода к файлу с именем f,
 // если #(so) - стандартный вывод на терминал. Возвращает пустую строку
@@ -199,7 +224,6 @@ void so(litera* f) {
     litcpy(out,"stdout");
   }
   if(ptr !=NULL) delete ptr;
-  return;
 }
 
 //// Арифметика
@@ -209,7 +233,6 @@ void rx(litera* f) {
   litera* ptr = param(f,1);
   radix = strtol(ptr,NULL,10);
   if(ptr != NULL) delete ptr;
-  return;
 }
 
 // #(ad,n1,n2,Z) сложение
@@ -224,7 +247,6 @@ void ad(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(su,n1,n2,Z) вычитание
 void su(litera* f) {
@@ -238,7 +260,6 @@ void su(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(ml,n1,n2,Z) умножение
 void ml(litera* f) {
@@ -252,7 +273,6 @@ void ml(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(dv,n1,n2,Z) деление
 void dv(litera* f) {
@@ -275,7 +295,6 @@ void dv(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 
 //// Побитовые операции
@@ -292,7 +311,6 @@ void an(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(or,n1,n2) возвращает побитовое ИЛИ
 void or(litera* f) {
@@ -306,10 +324,10 @@ void or(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(xr,n1,n2) возвращает побитовое XOR
-void xr(litera* f) {  litera* ptr = param(f,1);
+void xr(litera* f) {
+  litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
@@ -319,7 +337,7 @@ void xr(litera* f) {  litera* ptr = param(f,1);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;}
+}
 // #(no,n1) возвращает побитовое NOT
 void no(litera* f) {
   litera* ptr = param(f,1);
@@ -329,7 +347,6 @@ void no(litera* f) {
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(o != NULL) delete o;
-  return;
 }
 // #(bs,n1,n2) возвращает n1 сдвинутое влево на n2 бит
 void bs(litera* f) {
@@ -343,7 +360,6 @@ void bs(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 // #(br,n1,n2) возвращает n1 сдвинутое вправо на n2 бит
 void br(litera* f) {
@@ -357,7 +373,6 @@ void br(litera* f) {
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   if(o != NULL) delete o;
-  return;
 }
 
 //// Отладка
@@ -375,7 +390,6 @@ void nl(litera* f) {
     R.push(dl);
   }
   if(ptr != NULL) delete ptr;
-  return;
 }
 // #(pb,s) возвращает содержимое формы с именем s
 void pb(litera* f) {
@@ -383,17 +397,14 @@ void pb(litera* f) {
   int ref = findform(ptr);
   if( ref != -1 ) { R.push(F[ref].value); }                 // TODO сформатировать отладочнгый вывод
   if( ptr != NULL ) delete ptr;
-  return;
 }
 // #(tr) начать трассировку
 void tr(litera* f) {
   trace = true;
-  return;
 }
 // #(tf) закончить трассировку
 void tf(litera* f) {
   trace = false;
-  return;
 }
 
 //// Формы
@@ -405,19 +416,91 @@ void ds(litera* f) {
   formadd( ptr, ptr1);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
-  return;
 }
 // #(ss,n,d1,...,dn) нарезка формы с именем N на сегменты ограниченные цепочками
 // dx. Возвращает пустую строку
-void ss(litera* f) {}
+void ss(litera* f) {
+  litera* ptr = param(f,1);
+  int ref = findform(ptr);
+  if(ptr != NULL) delete ptr;
+  if(ref != -1) {
+    for(int i = 2; true ; i++) {
+      litera* ptr = param(f,i);
+      if(ptr != NULL) {
+        litera r[3]; r[0] = (litera)FORMBRAKE; r[1]=(litera)i-1; r[2]=(litera)0;
+        replaceall( F[ref].value, ptr, r);
+        delete ptr;
+      } else { break;}
+    }
+  }
+}
 // #(cl,n,d1,...,dn) вызывает форму n как функцию с параметрами dx
-void cl(litera* f) {}
+void cl(litera* f) {
+  litera* ptr = param(f,1);
+  int ref = findform(ptr);
+  if(ptr != NULL) delete ptr;
+  if(ref != -1) {
+    for(int i = 0; i < litlen(F[ref].value); i++) {
+      if( F[ref].value[i] == FORMBREAK) {
+        litera* ptr = param(f,(int)F[ref].value[i+1]-1);
+        R.push(ptr);
+        if(ptr != NULL) delete ptr;
+        i++;
+      } else {
+        R.push(F[ref].value[i]);
+      }
+    }
+  }
+}
 // #(cs,n,Z) вызов формы с именем N как список. Возвращает одну "следующую"
 // запись из списка. Если записей нет или они закончились возвращает Z
-void cs(litera* f) {}
+void cs(litera* f) {
+  litera* ptr = param(f,1);
+  int ref = findform(ptr);
+  if(ptr != NULL) delete ptr;
+  if(ref != -1) {
+    while(1) {
+      litera c = F[ref].value[F[ref].ptr++];
+      if(c != 0) {
+        if(c != (litera)FORMBREAK) {
+          R.push(c);
+        } else {
+          F[ref].ptr++;
+          break;
+        }
+      } else {
+        if(R.len == 0) {
+          z = true;
+          litera* ptr = param(f,2);
+          R.push(ptr);
+          if(ptr != NULL) delete ptr;
+          break;
+        } else {
+          break;
+        }
+      }
+    }
+  }
+}
 // #(cc,n,Z) вызов формы N как массив символов. Возвращает один"следующий"
 // символ. Если вернуть нечего возвращает Z
-void cc(litera* f) {}
+void cc(litera* f) {
+  litera* ptr = param(f,1);
+  int ref = findform(ptr);
+  if(ptr != NULL) delete ptr;
+  if(ref != -1) {
+    F[ref].ptr++;
+    litera c = F[ref].value[F[ref].ptr];
+    if(c != 0) {
+      R.push(c);
+    } else {
+      z = true;
+      litera* ptr = param(f,2);
+      R.push(ptr);
+      if(ptr != NULL) delete ptr;
+    }
+  }
+}
 // #(cn,n,d,Z) вызов формы n как массив полей равной длины d. Возвращает d
 // символов, при отрицательном d выдаются символы слева от маркера при
 // положительном - справа. При ошибке возвращает Z
@@ -434,7 +517,6 @@ void fd(litera* f) {
   }
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
-  return;
 }
 // #(cr,n) обнуление внутреннего указателя в форме n. Возвращает пустую строку
 void cr(litera* f) {
@@ -442,7 +524,6 @@ void cr(litera* f) {
   int ref = findform(ptr);
   if(ref != -1) { F[ref].ptr = 0; }
   if(ptr != NULL) delete ptr;
-  return;
 }
 // #(dd,n) удаление формы n. Возвращает пустую строку.
 void dd(litera* f) {
@@ -461,7 +542,6 @@ void dd(litera* f) {
     formlength--;
   }
   if(ptr != NULL) delete ptr;
-  return;
 }
 // #(da) удаление всех форм. Возвращает пустую строку.
 void da(litera* f) {
@@ -470,7 +550,6 @@ void da(litera* f) {
     if(F[i].name != NULL) delete F[i].name;
   }
   formlength = 0;
-  return;
 }
 // #(sb,f,n1,...,nn) сохранение форм n1.. в блок на диске с именем f.
 // Возвращает пустую строку

@@ -16,11 +16,8 @@ class Trac {
 
   void run(void);        // начало интерпретации
 	void doStep(void);     // выполнить один проход цикла интерпретации
-	void feed(litera* s);  // ввод
-	char* out(void);       // вывод
 
   private:
-	void parse(void);      // парсер входного потока
 	void execute(void);    // исполнитель функции
 	void runstdtrac(int start); // вызов встроенной функции трак
 #if EXTENDEDSYNTAX == TRUE
@@ -35,6 +32,7 @@ class Trac {
   litera* idle;     // код выполняемый пока нет ввода пользователя
   bool z;           // признак наличия ошибки в вызываемой функции
   char* in[MAXFILEPATH];    // откуда берутся данные
+  long inoffset;    // сдвиг в файле
   char* out[MAXFILEPATH];   // куда они складываются
 
 	RingBuf& I;       // входной буфер
@@ -46,7 +44,9 @@ class Trac {
   struct form F[MAXFORMS]; // хранилище форм
   int formlength;         // количество форм в нем
 
-  TracLib& L;
+  TracLib& L;       // встроенные функции trac
 };
+
+litera* param(litera*, int);
 
 #endif // __INTERPRET_H__

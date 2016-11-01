@@ -19,6 +19,7 @@ Trac::Trac(void) {
 	z = false;
 	formlength = 0;
 	litcpy(in,"stdin");
+	inoffset = 0;
 	litcpy(out,"stdout");
 	#if CHARSIZE == UNICODE
 	  idle = u8"#(ps,#(rs))";
@@ -38,9 +39,38 @@ Trac::~Trac(void) {
 
 void Trac::run(void){
 	while(notstop) {
-	  if(O.len > 0) {} // copy o to stdout
-	  if(I.len > 0) {} // copy stdin to a
-	  if(trace) {}     // напечатать отладочную информацию
+		// очистить выходной буфер
+	  if(O.len > 0) {
+			if(litcmp(out,"stdout") != 0) {
+				h = fopen(in,"a+");
+			} else {
+				h = stdout;
+			}
+			while(O.len > 0) {
+				fputc(O.get(),h);
+			}
+		}
+    // добавить вызовы прерываний         TODO
+
+		// пополнить входной буфер
+	  if(I.len < IBUFSIZE-1) {
+			FILE* h;
+			if(litcmp(in,"stdin") != 0) {
+				h = fopen(in,"r");
+				fseek( h, inoffset, SEEK_SET );
+			} else {
+				h = stdin;
+			}
+			while(I.len < IBUFSIZE-1) {
+				int c = fgetc(h);
+				if(c == EOF) { litcpy(in,"stdin"); inoffset = 0; break; }
+				I.push((char)c);
+				inoffset++;
+			}
+		}
+		// распечатать трассировку
+	  if(trace) {}                       // TODO напечатать отладочную информацию
+		// выполнить шаг интерпретатора
 	  if(A.len > 0) doStep();
   }
 }
@@ -125,15 +155,6 @@ void Trac::doStep(void){
 	}
 }
 
-void Trac::feed(litera* s) {
-}
-
-litera* Trac::out(void) {
-}
-
-void Trac::parse(void) {
-}
-
 void Trac::execute(void) {
 	litera* ptr;
 	// ищем начало функции в нейтральной цепочке
@@ -165,18 +186,18 @@ void Trac::execute(void) {
 // возвращает строку параметра с номером n
 litera* param(litera* start, int n) {
   litera *bgn = start, *en;
-  for(int i = 0; i < n; i++) { bgn = strchr(bgn+1,NEXTPARAM); }
+  for(int i = 0; i < n; i++) { bgn = litchr(bgn+1,NEXTPARAM); }
   if(bgn == NULL) return NULL;
-  en = strchr(bgn+1,NEXTPARAM);
+  en = litchr(bgn+1,NEXTPARAM);
   if(en == NULL) return NULL;
   int len = (int)(en - bgn);
   litera* o = new litera[len];
 #if CHARSIZE == UNICODE
-  strncpy(o, (char*)(bgn+1), (len-1)*2);
+  litncpy(o, (litera*)(bgn+1), len-1);
   o[len-1] = (litera)0;
 #endif
 #if CHARSIZE == ANSI
-  strncpy(o, (char*)(bgn+1), len-1);
+  litncpy(o, (litera*)(bgn+1), len-1);
   o[len-1] = (litera)0;
 #endif
   return o;
