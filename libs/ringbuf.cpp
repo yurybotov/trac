@@ -23,7 +23,6 @@ void RingBuf::clear(void)
 	b = e = len = 0;
 }
 
-
 void RingBuf::push(litera c)
 {
 	if (len == size) { error("push overflow"); return; }
