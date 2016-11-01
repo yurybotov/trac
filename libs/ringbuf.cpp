@@ -1,6 +1,6 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
-#include <cstring>
+#include "litera.h"
 #include <new>
 #endif
 
@@ -96,7 +96,7 @@ int RingBuf::lastindexof(litera ch)
 void RingBuf::push(litera* s)
 {
   if(s != NULL) {
-  	int l = strlen(s);
+  	int l = litlen(s);
   	for (int i = 0; i < l; i++) { push(s[i]); }
   }
 }
@@ -104,7 +104,7 @@ void RingBuf::push(litera* s)
 void RingBuf::put(litera* s)
 {
   if(s != NULL) {
-  	int l = strlen(s);
+  	int l = litlen(s);
   	for (int i = l-1; i >= 0; i--) { put(s[i]); }
   }
 }

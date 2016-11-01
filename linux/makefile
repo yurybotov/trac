@@ -5,7 +5,7 @@ C = g++
 .PHONY: all clean install uninstall
 
 all: $(TARGET)
-	
+
 clean:
 	rm -rf $(TARGET) *.o
 main.o: main.cpp
@@ -14,10 +14,12 @@ interpret.o: ../libs/interpret.cpp
 	$(C) -c -o -std=c++11 interpret.o ../libs/interpret.cpp
 ringbuf.o: ../libs/ringbuf.cpp
 	$(C) -c -o -std=c++11 ringbuf.o ../libs/ringbuf.cpp
+litera.o: ../libs/litera.cpp
+	$(C) -c -o -std=c++11 litera.o ../libs/litera.cpp
 traclib.o: ../libs/traclib.cpp
 	$(C) -c -o -std=c++11 traclib.o ../libs/traclib.cpp
-$(TARGET): main.o interpret.o ringbuf.o traclib.o
-	$(C) -o $(TARGET) main.o interpret.o ringbuf.o traclib.o
+$(TARGET): main.o interpret.o ringbuf.o traclib.o litera.o
+	$(C) -o $(TARGET) main.o interpret.o ringbuf.o traclib.o litera.o
 install:
 	install $(TARGET) $(PREFIX)
 uninstall:

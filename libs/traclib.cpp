@@ -3,6 +3,7 @@
 #endif
 
 #include "traclib.h"
+#include "litera.h"
 
 litera* loads() {
   litera* s;
@@ -16,28 +17,24 @@ litera* loads() {
   return NULL;
 }
 
-litera loadc() {
-  return I.get();
-}
-
 litera* formcall(litera* fst, litera* oth) {
    return NULL;                                       // TODO!!!!!!!!!!!!!!!!
 }
 
 // вычисляет хэш для формы
-int hash(litera* s) {
-  int a = 0;
-  for (int i = 0; i < strlen(s); i++) {
-    a = ((a << 3) ^ i) + (unsigned int)s[i];
-  }                                                 // TODO заменитель strlen для unicode
+uint16_t hash(litera* s) {
+  uint16_t a = 0;
+  for (int i = 0; i < litlen(s); i++) {
+    a = ((a << 3) ^ i) + (uint16_t)s[i];
+  }
   return a;
 }
 
 // ищет номер формы по имени
 int findform(litera* n) {
-  int h = hash(n), res = -1;
+  uint16_t h = hash(n), res = -1;
   for(int i = 0; i < formlength; i++) {
-    if( forms[i].owner == curuser && forms[i].hash == h && !strncmp(forms[i].name, n, 8)) {res = i; break;}
+    if( F[i].hash == h && !litcmp(F[i].name, n)) {res = i; break;}
   }                                           //  TODO strncmp для unicode
   return res;
 }
@@ -45,25 +42,26 @@ int findform(litera* n) {
 // добавляет форму
 int formadd(litera* fname, litera* fform) {
   int ref;
+  int len;
   if (fname != NULL) {
     if((ref = findform(fname)) != -1) {
+      // если форма с таким именем есть - заменяем ее
       delete F[ref].value;
-      F[ref].hash = hash(fname);
-      strncpy(F[ref].name, fname, 8); /// TODO переделать на длинные имена в хипе
-      F[ref].value = fform;
+      F[ref].value = new litera(litlen(fform)+1);
+      litcpy(F[ref].value, fform);
       F[ref].ptr = 0;
       F[ref].css = 0;
-      F[ref].owner = curuser;
-      // если форма с таким именем есть - заменяем ее
     } else {
       // если формы с таким именем нет - создаем новую
       struct form* f = forms + formlength;
       f->hash = hash(fname);
-      strncpy(f->name, fname, 8); /// TODO переделать на длинные имена в хипе
-      f->value = fform;
+      F[ref].name = new litera(litlen(fname)+1);
+      litcpy(F[ref].name, fname);
+      F[ref].value = new litera(litlen(fform)+1);
+      litcpy(F[ref].value, fform);
+      strncpy(f->name, fname, 8);
       f->ptr = 0;
       f->css = 0;
-      f->owner = curuser;
       formlength++;
     }
   }
@@ -88,7 +86,7 @@ void hl(litera* f) {
 void eq(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  if (strcmp(ptr, ptr1) == 0) { // TODO проверить правильность
+  if (litcmp(ptr, ptr1) == 0) {
     ptr2 = param(f,3);
   } else {
     ptr2 = param(f,4);
@@ -103,7 +101,7 @@ void eq(litera* f) {
 void gr(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  if (strcmp(ptr, ptr1) > 0) { // TODO проверить правильность
+  if (litcmp(ptr, ptr1) > 0) {
     ptr2 = param(f,3);
   } else {
     ptr2 = param(f,4);
@@ -118,7 +116,7 @@ void gr(litera* f) {
 void lt(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  if (strcmp(ptr, ptr1) < 0) { // TODO проверить правильность
+  if (litcmp(ptr, ptr1) < 0) {
     ptr2 = param(f,3);
   } else {
     ptr2 = param(f,4);
@@ -149,14 +147,27 @@ void cm(litera* f) {
 // нормально возвращает пустую строку, в случае ошибки возвращает Z
 void rs(litera* f) {
   litera* ptr = loads();
-  R.push(ptr);
+  if(!z) {
+    R.push(ptr);
+  } else {
+    z = true;
+    litera* ptr = param(f,1);
+    R.push(ptr);
+  }
   if( ptr != NULL) delete ptr;
   return;
 }
 // #(rc,Z) читает из входного буфера один символ. Любой, включая мету.
 // Возвращает этот символ или Z если ошибка
 void rc(litera* f) {
-  R.push( loadc());
+  if(I.len > 0) {
+    R.push( I.get());
+  } else {
+    z = true;
+    litera* ptr = param(f,1);
+    R.push(ptr);
+    if( ptr != NULL) delete ptr;
+  }
   return;
 }
 // #(ps,s) отправляет строку на текущее устройство вывода
@@ -168,21 +179,47 @@ void ps(litera* f) {
 }
 // #(si,f) подключить подсистему ввода к файлу с именем f,
 // если #(si) - стандартный ввод из терминала. Возвращает пустую строку.
-void si(litera* f) {}
+void si(litera* f) {
+  litera* ptr = param(f,1);
+  if(ptr != NULL) {
+    litcpy(in,ptr);
+  } else {
+    litcpy(in,"stdin");
+  }
+  if(ptr !=NULL) delete ptr;
+  return;
+}
 // #(so,f) подключить подсистему вывода к файлу с именем f,
 // если #(so) - стандартный вывод на терминал. Возвращает пустую строку
-void so(litera* f) {}
+void so(litera* f) {
+  litera* ptr = param(f,1);
+  if(ptr != NULL) {
+    litcpy(out,ptr);
+  } else {
+    litcpy(out,"stdout");
+  }
+  if(ptr !=NULL) delete ptr;
+  return;
+}
 
 //// Арифметика
+
+// #(rx,r) установить r-значную систему счисления (число записывается в 10-чной системе)
+void rx(litera* f) {
+  litera* ptr = param(f,1);
+  radix = strtol(ptr,NULL,10);
+  if(ptr != NULL) delete ptr;
+  return;
+}
 
 // #(ad,n1,n2,Z) сложение
 void ad(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
-  ltoa(a1+a2,o,10);
+  ltoa(a1+a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -193,10 +230,10 @@ void ad(litera* f) {
 void su(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
-  ltoa(a1-a2,o,10);
+  ltoa(a1-a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -207,10 +244,10 @@ void su(litera* f) {
 void ml(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
-  ltoa(a1*a2,o,10);
+  ltoa(a1*a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -221,9 +258,10 @@ void ml(litera* f) {
 void dv(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   if (a2 == 0) {
+    z = true;
     litera* ptr2 = param(f,3);
     R.push(ptr2);
     if(ptr != NULL) delete ptr;
@@ -246,8 +284,8 @@ void dv(litera* f) {
 void an(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
   ltoa(a1&a2,o,10);
   R.push(o);
@@ -260,8 +298,8 @@ void an(litera* f) {
 void or(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
   ltoa(a1|a2,o,10);
   R.push(o);
@@ -273,8 +311,8 @@ void or(litera* f) {
 // #(xr,n1,n2) возвращает побитовое XOR
 void xr(litera* f) {  litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
   ltoa(a1^a2,o,10);
   R.push(o);
@@ -285,7 +323,7 @@ void xr(litera* f) {  litera* ptr = param(f,1);
 // #(no,n1) возвращает побитовое NOT
 void no(litera* f) {
   litera* ptr = param(f,1);
-  int a1 = strtol(ptr,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
   litera* o = new litera[34];
   ltoa(!a1,o,10);
   R.push(o);
@@ -297,8 +335,8 @@ void no(litera* f) {
 void bs(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
   ltoa(a1<<a2,o,10);
   R.push(o);
@@ -311,8 +349,8 @@ void bs(litera* f) {
 void br(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
-  int a1 = strtol(ptr,NULL,10);
-  int a2 = strtol(ptr1,NULL,10);
+  int a1 = strtol(ptr,NULL,radix);
+  int a2 = strtol(ptr1,NULL,radix);
   litera* o = new litera[34];
   ltoa(a1>>a2,o,10);
   R.push(o);
@@ -332,8 +370,8 @@ void np(litera* f) {
 void nl(litera* f) {
   litera* ptr = param(f,1);
   litera dl = (ptr == NULL)? ' ' : ptr[0];
-  for(int i = 0; i < formlength; i++) {  // TODO проверить правильность использования formlength
-    R.push(forms[i].name);
+  for(int i = 0; i < formlength; i++) {
+    R.push(F[i].name);
     R.push(dl);
   }
   if(ptr != NULL) delete ptr;
@@ -343,14 +381,20 @@ void nl(litera* f) {
 void pb(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
-  if( ref != -1 ) { R.push(F[ref].value); } // TODO сформатировать отладочнгый вывод
+  if( ref != -1 ) { R.push(F[ref].value); }                 // TODO сформатировать отладочнгый вывод
   if( ptr != NULL ) delete ptr;
   return;
 }
 // #(tr) начать трассировку
-void tr(litera* f) {}
+void tr(litera* f) {
+  trace = true;
+  return;
+}
 // #(tf) закончить трассировку
-void tf(litera* f) {}
+void tf(litera* f) {
+  trace = false;
+  return;
+}
 
 //// Формы
 
@@ -384,10 +428,10 @@ void fd(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int ref = findform(ptr);
-/*  if(ref != -1) {                                      TODO
-    char* substr = strstr(forms[ref].value, ptr1);
-    if(substr != NULL) { forms[ref].ptr = (int)(substr - forms[ref].value); }
-  }*/
+  if(ref != -1) {
+    char* substr = litlit(F[ref].value, ptr1);
+    if(substr != NULL) { F[ref].ptr = (int)(substr - F[ref].value); }
+  }
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
   return;
@@ -405,23 +449,25 @@ void dd(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ref != -1) {
-/*    delete forms[ref].value;                            TODO
+    delete forms[ref].value;
+    delete forms[ref].name;
     for(int i = ref; i < (formlength-1); i++) {
       forms[i].hash = forms[i+1].hash;
-      strncpy(forms[i].name, forms[i+1].name, 8);
+      forms[i].name = forms[i+1].name;
       forms[i].value = forms[i+1].value;
       forms[i].ptr = forms[i+1].ptr;
       forms[i].css = forms[i+1].css;
     }
-    formlength--;*/
+    formlength--;
   }
   if(ptr != NULL) delete ptr;
   return;
 }
 // #(da) удаление всех форм. Возвращает пустую строку.
 void da(litera* f) {
-  for(int i = 0; i < MAXFORMS; i++) {
-    if(F[i].value != NULL) delete F[i].value; // TODO проверить правильность
+  for(int i = 0; i < (formlength-1); i++) {
+    if(F[i].value != NULL) delete F[i].value;
+    if(F[i].name != NULL) delete F[i].name;
   }
   formlength = 0;
   return;
@@ -434,11 +480,3 @@ void sb(litera* f) {}
 void fb(litera* f) {}
 // #(eb,f) удалить блок на диске с именем N. Возвращает пустую строку
 void eb(litera* f) {}
-
-//// Пользователи
-
-// #(un) возвращает имя текщего пользователя
-void un(litera* f) {}
-// #(us,n) делает текущим пользователем пользователя с номером n.
-// Возвращает пустую строку.
-void us(litera* f) {}

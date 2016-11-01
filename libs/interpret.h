@@ -7,7 +7,6 @@ struct form {
   litera* value;
   int ptr;
   int css;
-  uint8_t owner;
 };
 
 class Trac {
@@ -24,14 +23,19 @@ class Trac {
 	void parse(void);      // парсер входного потока
 	void execute(void);    // исполнитель функции
 	void runstdtrac(int start); // вызов встроенной функции трак
-#ifdef EXTENDEDSYNTAX
+#if EXTENDEDSYNTAX == TRUE
   void runexttrac(litera* first,litera* f); // вызов встроенной функции расширенного синтаксиса
 #endif
 	void runuser(litera* first,litera* f); // вызов пользовательской функции
 
 	litera meta;      // символ разделитель ввода
+  bool notstop;     // признак того что вычисления продолжаются
+  bool trace;       // признак отладочной трассировки
+  int radix;        // система счисления
   litera* idle;     // код выполняемый пока нет ввода пользователя
   bool z;           // признак наличия ошибки в вызываемой функции
+  char* in[MAXFILEPATH];    // откуда берутся данные
+  char* out[MAXFILEPATH];   // куда они складываются
 
 	RingBuf& I;       // входной буфер
 	RingBuf& A;       // активный буфер
@@ -40,6 +44,9 @@ class Trac {
 	RingBuf& O;       // выходной буфер
 
   struct form F[MAXFORMS]; // хранилище форм
+  int formlength;         // количество форм в нем
+
+  TracLib& L;
 };
 
 #endif // __INTERPRET_H__

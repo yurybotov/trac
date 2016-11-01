@@ -26,6 +26,9 @@
 #define FLOATINGPOINT TRUE
 
 //// Проверки
+#ifndef CHARSIZE
+#define CHARSIZE ANSI
+#endif
 
 
 //// Прочее
@@ -45,6 +48,8 @@
 #define RBUFSIZE	1024
 // Максимальное количество форм
 #define MAXFORMS	1024
+// Максимальная длина пути к файлу и имени файла
+#define MAXFILEPATH	256
 #include <stdint.h>
 #endif // TARGET == LINUX
 
@@ -63,12 +68,14 @@
 #define RBUFSIZE	256
 // Максимальное количество форм
 #define MAXFORMS	256
+// Максимальная длина пути к файлу и имени файла
+#define MAXFILEPATH	64
 #endif // TARGET == ESP8266
 
 //// Вычисляемые
 
 #if CHARSIZE == ANSI
-typedef uint8_t		litera;
+typedef char		litera;
 #define NEXTPARAM	((litera)17)
 #define ACTIVEFUN	((litera)18)
 #define NEYTRALFUN	((litera)19)
@@ -82,6 +89,5 @@ typedef uint16_t	litera;
 #define NEYTRALFUN	((litera)0xee19)
 #define ENDFUN		((litera)0xee20)
 #endif
-
 
 #endif // __PROJECTCFG_H__
