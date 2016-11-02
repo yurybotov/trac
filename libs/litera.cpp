@@ -16,8 +16,8 @@ int litlen(litera* s) { return strlen((char*)s);}
 litera* litcpy(litera* d, litera* s) { return (char*) strcpy((char*)d,(char*)s);}
 litera* litncpy(litera* d, litera* s, int n) { return (char*) strncpy((char*)d,(char*)s,n);}
 int litcmp(litera* d, litera* s) { return strcmp((char*)d,(char*)s); }
-litera* litlit(litera* s, litera* sub) { return (litera*)strtsr((char*)s, (char*)sub); }
-litera* litchr(litera* s, litera c) { return (litera*)strchr(s(char*),(char)c); }
+litera* litlit(litera* s, litera* sub) { return (litera*)strstr((char*)s, (char*)sub); }
+litera* litchr(litera* s, litera c) { return (litera*)strchr((char*)s,(char)c); }
 litera* num2lit(num i, int r) { return (litera*)NULL; }
 litera* int2lit(int i, int r) { return (litera*)NULL; }
 
