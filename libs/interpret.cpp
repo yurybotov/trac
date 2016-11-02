@@ -22,10 +22,10 @@ Trac::Trac(void) {
 	inoffset = 0;
 	litcpy(out,"stdout");
 	#if CHARSIZE == UNICODE
-	  idle = u8"#(ps,#(rs))";
+	  litcpy(idle,u8"#(ps,#(rs))");
 	#endif
 	#if CHARSIZE == ANSI
-	  idle = "#(ps,#(rs))";
+	  litcpy(idle,"#(ps,#(rs))");
 	#endif
 }
 
@@ -40,7 +40,7 @@ Trac::~Trac(void) {
 void Trac::run(void){
 	while(notstop) {
 		// очистить выходной буфер
-	  if(O.len > 0) {
+	  if(O.length() > 0) {
 			FILE* h;
 			if(litcmp(out,"stdout") != 0) {
 				h = fopen(in,"a+");
@@ -54,7 +54,7 @@ void Trac::run(void){
     // добавить вызовы прерываний         TODO
 
 		// пополнить входной буфер
-	  if(I.len < IBUFSIZE-1) {
+	  if(I.length() < IBUFSIZE-1) {
 			FILE* h;
 			if(litcmp(in,"stdin") != 0) {
 				h = fopen(in,"r");
@@ -62,7 +62,7 @@ void Trac::run(void){
 			} else {
 				h = stdin;
 			}
-			while(I.len < IBUFSIZE-1) {
+			while(I.length() < IBUFSIZE-1) {
 				int c = fgetc(h);
 				if(c == EOF) { litcpy(in,"stdin"); inoffset = 0; break; }
 				I.push((char)c);
@@ -72,7 +72,7 @@ void Trac::run(void){
 		// распечатать трассировку
 	  if(trace) {}                       // TODO напечатать отладочную информацию
 		// выполнить шаг интерпретатора
-	  if(A.len > 0) doStep();
+	  if(A.length() > 0) doStep();
   }
 }
 
@@ -211,127 +211,127 @@ void Trac::runstdtrac(int start) {
 	  switch(first[0]) {
 		  case (litera)'a':
 		  switch(first[1]){
-			  case (litera)'d': ad(f); free(f); free(first); return;
-			  case (litera)'n': an(f); free(f); free(first); return;
+			  case (litera)'d': ad(f); delete f; delete first; return;
+			  case (litera)'n': an(f); delete f; delete first; return;
 			  default: break;
 		  }
 		  break;
 		  case (litera)'b':
 				switch(first[1]){
-					case (litera)'r': br(f); free(f); free(first); return;
-					case (litera)'s': bs(f); free(f); free(first); return;
+					case (litera)'r': br(f); delete f; delete first; return;
+					case (litera)'s': bs(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'c':
 				switch(first[1]){
-					case (litera)'c': cc(f); free(f); free(first); return;
-					case (litera)'l': cl(f); free(f); free(first); return;
-					case (litera)'m': cm(f); free(f); free(first); return;
-					case (litera)'n': cn(f); free(f); free(first); return;
-					case (litera)'r': cr(f); free(f); free(first); return;
-					case (litera)'s': cs(f); free(f); free(first); return;
+					case (litera)'c': cc(f); delete f; delete first; return;
+					case (litera)'l': cl(f); delete f; delete first; return;
+					case (litera)'m': cm(f); delete f; delete first; return;
+					case (litera)'n': cn(f); delete f; delete first; return;
+					case (litera)'r': cr(f); delete f; delete first; return;
+					case (litera)'s': cs(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'d':
 				switch(first[1]){
-					case (litera)'a': da(f); free(f); free(first); return;
-					case (litera)'d': dd(f); free(f); free(first); return;
-					case (litera)'s': ds(f); free(f); free(first); return;
-					case (litera)'v': dv(f); free(f); free(first); return;
+					case (litera)'a': da(f); delete f; delete first; return;
+					case (litera)'d': dd(f); delete f; delete first; return;
+					case (litera)'s': ds(f); delete f; delete first; return;
+					case (litera)'v': dv(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'e':
 				switch(first[1]){
-					case (litera)'b': eb(f); free(f); free(first); return;
-					case (litera)'q': eq(f); free(f); free(first); return;
+					case (litera)'b': eb(f); delete f; delete first; return;
+					case (litera)'q': eq(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'f':
 				switch(first[1]){
-					case (litera)'b': fb(f); free(f); free(first); return;
-					case (litera)'d': fd(f); free(f); free(first); return;
+					case (litera)'b': fb(f); delete f; delete first; return;
+					case (litera)'d': fd(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'g':
 				switch(first[1]){
-					case (litera)'m': gm(f); free(f); free(first); return;
-					case (litera)'r': gr(f); free(f); free(first); return;
+					case (litera)'m': gm(f); delete f; delete first; return;
+					case (litera)'r': gr(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'h':
 				switch(first[1]){
-					case (litera)'l': hl(f); free(f); free(first); return;
+					case (litera)'l': hl(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'l':
 				switch(first[1]){
-					case (litera)'t': lt(f); free(f); free(first); return;
+					case (litera)'t': lt(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'m':
 				switch(first[1]){
-					case (litera)'l': ml(f); free(f); free(first); return;
+					case (litera)'l': ml(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'n':
 				switch(first[1]){
-					case (litera)'l': nl(f); free(f); free(first); return;
-					case (litera)'o': no(f); free(f); free(first); return;
-					case (litera)'p': np(f); free(f); free(first); return;
+					case (litera)'l': nl(f); delete f; delete first; return;
+					case (litera)'o': no(f); delete f; delete first; return;
+					case (litera)'p': np(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'o':
 				switch(first[1]){
-					case (litera)'r': or_(f); free(f); free(first); return;
+					case (litera)'r': or_(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'p':
 				switch(first[1]){
-					case (litera)'b': pb(f); free(f); free(first); return;
-					case (litera)'s': ps(f); free(f); free(first); return;
+					case (litera)'b': pb(f); delete f; delete first; return;
+					case (litera)'s': ps(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'r':
 				switch(first[1]){
-					case (litera)'c': rc(f); free(f); free(first); return;
-					case (litera)'s': rs(f); free(f); free(first); return;
-					case (litera)'t': rt(f); free(f); free(first); return;
-					case (litera)'x': rx(f); free(f); free(first); return;
+					case (litera)'c': rc(f); delete f; delete first; return;
+					case (litera)'s': rs(f); delete f; delete first; return;
+					case (litera)'t': rt(f); delete f; delete first; return;
+					case (litera)'x': rx(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'s':
 				switch(first[1]){
-					case (litera)'b': sb(f); free(f); free(first); return;
-					case (litera)'i': si(f); free(f); free(first); return;
-					case (litera)'o': so(f); free(f); free(first); return;
-					case (litera)'s': ss(f); free(f); free(first); return;
-					case (litera)'u': su(f); free(f); free(first); return;
+					case (litera)'b': sb(f); delete f; delete first; return;
+					case (litera)'i': si(f); delete f; delete first; return;
+					case (litera)'o': so(f); delete f; delete first; return;
+					case (litera)'s': ss(f); delete f; delete first; return;
+					case (litera)'u': su(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'t':
 				switch(first[1]){
-					case (litera)'f': tf(f); free(f); free(first); return;
-					case (litera)'r': tr(f); free(f); free(first); return;
+					case (litera)'f': tf(f); delete f; delete first; return;
+					case (litera)'r': tr(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
 		  case (litera)'x':
 				switch(first[1]){
-					case (litera)'r': xr(f); free(f); free(first); return;
+					case (litera)'r': xr(f); delete f; delete first; return;
 					default: break;
 				}
 			break;
@@ -348,22 +348,22 @@ void Trac::runstdtrac(int start) {
 #if EXTENDEDSYNTAX == TRUE
 void Trac::runexttrac(litera* first, litera* f) {
   if(first[1] == 0) {
-		if(first[0] == (litera)'+') { ad(f); free(f); free(first); return;}
-		if(first[0] == (litera)'-') { sb(f); free(f); free(first); return;}
-		if(first[0] == (litera)'*') { ml(f); free(f); free(first); return;}
-		if(first[0] == (litera)'/') { dv(f); free(f); free(first); return;}
-		if(first[0] == (litera)'&') { an(f); free(f); free(first); return;}
-		if(first[0] == (litera)'|') { or_(f); free(f); free(first); return;}
-		if(first[0] == (litera)'^') { xr(f); free(f); free(first); return;}
-		if(first[0] == (litera)'!') { no(f); free(f); free(first); return;}
-		if(first[0] == (litera)'=') { eq(f); free(f); free(first); return;}
-		if(first[0] == (litera)'<') { lt(f); free(f); free(first); return;}
-		if(first[0] == (litera)'>') { gt(f); free(f); free(first); return;}
+		if(first[0] == (litera)'+') { ad(f); delete f; delete first; return;}
+		if(first[0] == (litera)'-') { sb(f); delete f; delete first; return;}
+		if(first[0] == (litera)'*') { ml(f); delete f; delete first; return;}
+		if(first[0] == (litera)'/') { dv(f); delete f; delete first; return;}
+		if(first[0] == (litera)'&') { an(f); delete f; delete first; return;}
+		if(first[0] == (litera)'|') { or_(f); delete f; delete first; return;}
+		if(first[0] == (litera)'^') { xr(f); delete f; delete first; return;}
+		if(first[0] == (litera)'!') { no(f); delete f; delete first; return;}
+		if(first[0] == (litera)'=') { eq(f); delete f; delete first; return;}
+		if(first[0] == (litera)'<') { lt(f); delete f; delete first; return;}
+		if(first[0] == (litera)'>') { gt(f); delete f; delete first; return;}
 	}
 	if(first[2] == 0) {
-		if(first[0] == (litera)'<' && first[1] == (litera)'<') { bs(f); free(f); free(first); return;}
-		if(first[0] == (litera)'>' && first[1] == (litera)'>') { br(f); free(f); free(first); return;}
-		if(first[0] == (litera)'=' && first[1] == (litera)'=') { eq(f); free(f); free(first); return;}
+		if(first[0] == (litera)'<' && first[1] == (litera)'<') { bs(f); delete f; delete first; return;}
+		if(first[0] == (litera)'>' && first[1] == (litera)'>') { br(f); delete f; delete first; return;}
+		if(first[0] == (litera)'=' && first[1] == (litera)'=') { eq(f); delete f; delete first; return;}
 	}
 	runuser(first,f);
 }
@@ -371,7 +371,7 @@ void Trac::runexttrac(litera* first, litera* f) {
 
 void Trac::runuser(litera* first, litera* f) {
 	litera* ptr1 = param(f,1);
-	litera* ptr2 = L.formcall(first, ptr1);
+	litera* ptr2 = formcall(first, ptr1);
 	R.push(ptr2);
 	if(ptr1 !=NULL) delete ptr1; if(ptr2 !=NULL) delete ptr2;
 	if( f != NULL) delete f; if( first != NULL) delete first;
