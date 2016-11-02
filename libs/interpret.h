@@ -5,6 +5,7 @@
 #include "../linux/projectcfg.h"
 #endif
 
+#include "litera.h"
 #include "ringbuf.h"
 
 struct form {
@@ -41,11 +42,11 @@ class Trac {
   long inoffset;    // сдвиг в файле
   char* out[MAXFILEPATH];   // куда они складываются
 
-	RingBuf& I;       // входной буфер
-	RingBuf& A;       // активный буфер
-	RingBuf& N;       // нейтральный буфер
-  RingBuf& R;       // буфер результата функции
-	RingBuf& O;       // выходной буфер
+	RingBuf& I = *new RingBuf(IBUFSIZE);       // входной буфер
+	RingBuf& A = *new RingBuf(ABUFSIZE);       // активный буфер
+	RingBuf& N = *new RingBuf(NBUFSIZE);       // нейтральный буфер
+  RingBuf& R = *new RingBuf(RBUFSIZE);       // буфер результата функции
+	RingBuf& O = *new RingBuf(OBUFSIZE);       // выходной буфер
 
   struct form F[MAXFORMS]; // хранилище форм
   int formlength;         // количество форм в нем

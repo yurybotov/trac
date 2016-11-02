@@ -1,17 +1,17 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
 #include <new>
+#include <stdio>
 #endif
 
 #include "interpret.h"
 
 Trac::Trac(void) {
-	I = *new RingBuf(IBUFSIZE);
-	A = *new RingBuf(ABUFSIZE);
-	N = *new RingBuf(NBUFSIZE);
-	O = *new RingBuf(OBUFSIZE);
-	R = *new RingBuf(RBUFSIZE);
-	L = *new TracLib();
+//	I = *new RingBuf(IBUFSIZE);
+//	A = *new RingBuf(ABUFSIZE);
+//	N = *new RingBuf(NBUFSIZE);
+//	O = *new RingBuf(OBUFSIZE);
+//	R = *new RingBuf(RBUFSIZE);
 	meta = (litera) '`';
 	notstop = true;
 	trace = false;
@@ -25,22 +25,23 @@ Trac::Trac(void) {
 	  idle = u8"#(ps,#(rs))";
 	#endif
 	#if CHARSIZE == ANSI
-	  idle = "#(ps,#(rs))"
+	  idle = "#(ps,#(rs))";
 	#endif
 }
 
 Trac::~Trac(void) {
-	delete I;
-	delete A;
-	delete N;
-	delete O;
-	delete R;
+	delete &I;
+	delete &A;
+	delete &N;
+	delete &O;
+	delete &R;
 }
 
 void Trac::run(void){
 	while(notstop) {
 		// очистить выходной буфер
 	  if(O.len > 0) {
+			FILE* h;
 			if(litcmp(out,"stdout") != 0) {
 				h = fopen(in,"a+");
 			} else {
