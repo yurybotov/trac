@@ -2,6 +2,7 @@
 #include "../linux/projectcfg.h"
 #include "litera.h"
 #include <new>
+#include <stdlib.h>
 #endif
 
 #include "ringbuf.h"
