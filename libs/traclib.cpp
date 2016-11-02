@@ -223,9 +223,9 @@ void Trac::ps(litera* f) {
 void Trac::si(litera* f) {
   litera* ptr = param(f,1);
   if(ptr != NULL) {
-    litcpy(in,ptr);
+    in = ptr;
   } else {
-    litcpy(in,"stdin");
+    in = "stdin";
   }
   inoffset = 0;
   if(ptr !=NULL) delete ptr;
@@ -236,9 +236,9 @@ void Trac::si(litera* f) {
 void Trac::so(litera* f) {
   litera* ptr = param(f,1);
   if(ptr != NULL) {
-    litcpy(out,ptr);
+    out = ptr;
   } else {
-    litcpy(out,"stdout");
+    out = "stdout";
   }
   if(ptr !=NULL) delete ptr;
 }

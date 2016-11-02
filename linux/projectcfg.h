@@ -51,6 +51,8 @@
 // Максимальная длина пути к файлу и имени файла
 #define MAXFILEPATH	256
 #include <cstdint>
+#include <string>
+typedef std::string string;
 #endif // TARGET == LINUX
 
 #if TARGET == ESP8266

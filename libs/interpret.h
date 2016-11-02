@@ -38,11 +38,11 @@ class Trac {
   bool notstop;     // признак того что вычисления продолжаются
   bool trace;       // признак отладочной трассировки
   int radix;        // система счисления
-  std::string idle;  // код выполняемый пока нет ввода пользователя
+  string idle;      // код выполняемый пока нет ввода пользователя
   bool z;           // признак наличия ошибки в вызываемой функции
-  char in[MAXFILEPATH];    // откуда берутся данные
+  string in;        // откуда берутся данные
   long inoffset;    // сдвиг в файле
-  char out[MAXFILEPATH];   // куда они складываются
+  string out;       // куда они складываются
 
 	RingBuf& I = *new RingBuf(IBUFSIZE);       // входной буфер
 	RingBuf& A = *new RingBuf(ABUFSIZE);       // активный буфер

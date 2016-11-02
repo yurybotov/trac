@@ -7,20 +7,15 @@
 #include "interpret.h"
 
 Trac::Trac(void) {
-//	I = *new RingBuf(IBUFSIZE);
-//	A = *new RingBuf(ABUFSIZE);
-//	N = *new RingBuf(NBUFSIZE);
-//	O = *new RingBuf(OBUFSIZE);
-//	R = *new RingBuf(RBUFSIZE);
 	meta = (litera) '`';
 	notstop = true;
 	trace = false;
 	radix = 10;
 	z = false;
 	formlength = 0;
-	litcpy(in,"stdin");
+	in = "stdin";
 	inoffset = 0;
-	litcpy(out,"stdout");
+	out = "stdout";
 	#if CHARSIZE == UNICODE
 	  idle =u8"#(ps,#(rs))";
 	#endif
@@ -42,7 +37,7 @@ void Trac::run(void){
 		// очистить выходной буфер
 	  if(O.length() > 0) {
 			FILE* h;
-			if(litcmp(out,"stdout") != 0) {
+			if(out =="stdout") {
 				h = fopen(in,"a+");
 			} else {
 				h = stdout;
@@ -56,7 +51,7 @@ void Trac::run(void){
 		// пополнить входной буфер
 	  if(I.length() < IBUFSIZE-1) {
 			FILE* h;
-			if(litcmp(in,"stdin") != 0) {
+			if(in == "stdin") {
 				h = fopen(in,"r");
 				fseek( h, inoffset, SEEK_SET );
 			} else {
@@ -64,8 +59,8 @@ void Trac::run(void){
 			}
 			while(I.length() < IBUFSIZE-1) {
 				int c = fgetc(h);
-				if(c == EOF) { litcpy(in,"stdin"); inoffset = 0; break; }
-				I.push((char)c);
+				if(c == EOF) { in = "stdin"; inoffset = 0; break; }
+				I.push((litera)c);
 				inoffset++;
 			}
 		}
@@ -94,7 +89,7 @@ void Trac::doStep(void){
 	// если активная строка пуста - рестарт
 	if (A.length() == 0) {
 		N.clear();
-		A.push(idle.c_str());
+		A.push((litera*)idle.c_str());
 		z = false;
 	} else {
 		//  если ( - ищем закрывающую скобку и все это вместе уносим в нейтральную цепочку (без скобок)
@@ -104,7 +99,7 @@ void Trac::doStep(void){
 			// если не нашли закрывающую скобку - рестарт
 			if(parent == -1) {
 				N.clear();
-				A.push(idle.c_str());
+				A.push((litera*)idle.c_str());
 				z = false;
 				return;
 			}
