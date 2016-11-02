@@ -20,9 +20,9 @@ int litcmp(litera* d, litera* s) { return strcmp((char*)d,(char*)s); }
 litera* litlit(litera* s, litera* sub) { return (litera*)strstr((char*)s, (char*)sub); }
 litera* litchr(litera* s, litera c) { return (litera*)strchr((char*)s,(char)c); }
 #if FLOATINGPOINT == TRUE
-litera* num2lit(num f, int r) { string s = to_string(f); return (litera*)s.c_str(); }
+litera* num2lit(num f, int r) { string s = to_string((float)f); return (litera*)s.c_str(); }
 #else
-litera* num2lit(num i, int r) { string s = to_string(i); return (litera*)s.c_str(); }
+litera* num2lit(num i, int r) { string s = to_string((int)i); return (litera*)s.c_str(); }
 #endif
 litera* int2lit(int i, int r) { string s = to_string(i); return (litera*)s.c_str(); }
 
