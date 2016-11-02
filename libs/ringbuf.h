@@ -1,8 +1,6 @@
 //
 // Вспомогательная библиотека: Циклический буфер
 //
-
-
 #ifndef __RINGBUF_H__
 #define __RINGBUF_H__
 
@@ -12,7 +10,7 @@ public:
 	~RingBuf(void);
 	void clear(void);
 	inline int length(void) { return len; };
-	
+
 	void push(litera c);	// добавить в конец
 	char pop(void);		// вытолкнуть из конца
 	void put(litera c);	// добавить в начало

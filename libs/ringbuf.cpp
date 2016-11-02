@@ -139,5 +139,5 @@ litera* RingBuf::asstring() {
 
 void RingBuf::error(const char* s)
 {
-	//Error(s);
+	//Error(s);														                                TODO
 }

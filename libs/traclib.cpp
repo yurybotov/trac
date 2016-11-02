@@ -2,10 +2,10 @@
 #include "../linux/projectcfg.h"
 #endif
 
-#include "traclib.h"
+#include "interpret.h"
 #include "litera.h"
 
-litera* loads() {
+litera* Trac::loads() {
   litera* s;
   int metaptr = I.indexof(meta);
   if( metaptr != -1) {
@@ -37,10 +37,11 @@ void replaceall( litera* s, litera* find, litera* replace) {
     }
   }
   delete s;
-  s = temp.asstring();
+  s = tmp.asstring();
+  delete tmp;
 }
 
-litera* formcall(litera* fst, litera* f) {
+litera* Trac::formcall(litera* fst, litera* f) {
   int ref = findform(fst);
   if(ref != -1) {
     for(int i = 0; i < litlen(F[ref].value); i++) {
@@ -66,7 +67,7 @@ uint16_t hash(litera* s) {
 }
 
 // ищет номер формы по имени
-int findform(litera* n) {
+int Trac::findform(litera* n) {
   uint16_t h = hash(n), res = -1;
   for(int i = 0; i < formlength; i++) {
     if( F[i].hash == h && !litcmp(F[i].name, n)) {res = i; break;}
@@ -75,7 +76,7 @@ int findform(litera* n) {
 }
 
 // добавляет форму
-int formadd(litera* fname, litera* fform) {
+int Trac::formadd(litera* fname, litera* fform) {
   int ref;
   int len;
   if (fname != NULL) {
@@ -104,19 +105,22 @@ int formadd(litera* fname, litera* fform) {
 
 //// управление выполнением
 // #(rt) ресет
-void rt(litera* f) {     // TODO в разных сборках по разному
+// ReseT
+void Trac::rt(litera* f) {     // TODO в разных сборках по разному
   N.clear();
   A.push(idle);
   z = false;
 }
 // #(hl) остановка
-void hl(litera* f) {
+// HalT
+void Trac::hl(litera* f) {
   N.clear();
   A.push(idle);
   z = false;
 }
 // #(eq,a,b,than,else) сравнение если a == b
-void eq(litera* f) {
+// is EQual
+void Trac::eq(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   if (litcmp(ptr, ptr1) == 0) {
@@ -130,7 +134,8 @@ void eq(litera* f) {
   if(ptr2 != NULL) delete ptr2;
 }
 // #(gr,a,b,than,else) сравнение если a > b
-void gr(litera* f) {
+// is GReate then
+void Trac::gr(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   if (litcmp(ptr, ptr1) > 0) {
@@ -144,7 +149,8 @@ void gr(litera* f) {
   if(ptr2 != NULL) delete ptr2;
 }
 // #(lt,a,b,than,else) сравнение если a < b
-void lt(litera* f) {
+// is LiTtle then
+void Trac::lt(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   if (litcmp(ptr, ptr1) < 0) {
@@ -161,11 +167,13 @@ void lt(litera* f) {
 //// Ввод-вывод
 
 // #(gm) возвращает текущий символ мета
-void gm(litera* f) {
+// Get Meta
+void Trac::gm(litera* f) {
   R.push(meta);
 }
 // #(cm) заменяет текущий символ мета. Возвращает пустую строку
-void cm(litera* f) {
+// Change Meta
+void Trac::cm(litera* f) {
   litera* ptr = param(f,1);
   meta = ptr[0];
   if( ptr != NULL) delete ptr;
@@ -173,7 +181,8 @@ void cm(litera* f) {
 // #(rs,Z) читает из входного буфера строку от начала до символа мета и
 // переносит ее в конец активной цепочки. Мету из буфера выкидываем. Если все
 // нормально возвращает пустую строку, в случае ошибки возвращает Z
-void rs(litera* f) {
+// Read String
+void Trac::rs(litera* f) {
   litera* ptr = loads();
   if(!z) {
     R.push(ptr);
@@ -186,7 +195,8 @@ void rs(litera* f) {
 }
 // #(rc,Z) читает из входного буфера один символ. Любой, включая мету.
 // Возвращает этот символ или Z если ошибка
-void rc(litera* f) {
+// Read Character
+void Trac::rc(litera* f) {
   if(I.len > 0) {
     R.push( I.get());
   } else {
@@ -197,14 +207,16 @@ void rc(litera* f) {
   }
 }
 // #(ps,s) отправляет строку на текущее устройство вывода
-void ps(litera* f) {
+// Print String
+void Trac::ps(litera* f) {
   litera* ptr = param(f,1);
   O.push(ptr);
   if(ptr !=NULL) delete ptr;
 }
 // #(si,f) подключить подсистему ввода к файлу с именем f,
-// если #(si) - стандартный ввод из терминала. Возвращает пустую строку.
-void si(litera* f) {
+// если #(si) - стандартный ввод из терминала. Возвращает пустую строку
+// Set Input
+void Trac::si(litera* f) {
   litera* ptr = param(f,1);
   if(ptr != NULL) {
     litcpy(in,ptr);
@@ -216,7 +228,8 @@ void si(litera* f) {
 }
 // #(so,f) подключить подсистему вывода к файлу с именем f,
 // если #(so) - стандартный вывод на терминал. Возвращает пустую строку
-void so(litera* f) {
+// Set Output
+void Trac::so(litera* f) {
   litera* ptr = param(f,1);
   if(ptr != NULL) {
     litcpy(out,ptr);
@@ -229,14 +242,16 @@ void so(litera* f) {
 //// Арифметика
 
 // #(rx,r) установить r-значную систему счисления (число записывается в 10-чной системе)
-void rx(litera* f) {
+// RadiX
+void Trac::rx(litera* f) {
   litera* ptr = param(f,1);
   radix = strtol(ptr,NULL,10);
   if(ptr != NULL) delete ptr;
 }
 
 // #(ad,n1,n2,Z) сложение
-void ad(litera* f) {
+// ADd
+void Trac::ad(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -249,7 +264,8 @@ void ad(litera* f) {
   if(o != NULL) delete o;
 }
 // #(su,n1,n2,Z) вычитание
-void su(litera* f) {
+// SUbstract
+void Trac::su(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -262,7 +278,8 @@ void su(litera* f) {
   if(o != NULL) delete o;
 }
 // #(ml,n1,n2,Z) умножение
-void ml(litera* f) {
+// MuLtiplify
+void Trac::ml(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -275,7 +292,8 @@ void ml(litera* f) {
   if(o != NULL) delete o;
 }
 // #(dv,n1,n2,Z) деление
-void dv(litera* f) {
+// DiVide
+void Trac::dv(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -300,7 +318,8 @@ void dv(litera* f) {
 //// Побитовые операции
 
 // #(an,n1,n2) возвращает побитовое И
-void an(litera* f) {
+// ANd
+void Trac::an(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -313,7 +332,8 @@ void an(litera* f) {
   if(o != NULL) delete o;
 }
 // #(or,n1,n2) возвращает побитовое ИЛИ
-void or(litera* f) {
+// OR
+void Trac::or(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -326,7 +346,8 @@ void or(litera* f) {
   if(o != NULL) delete o;
 }
 // #(xr,n1,n2) возвращает побитовое XOR
-void xr(litera* f) {
+// XoR
+void Trac::xr(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -339,7 +360,8 @@ void xr(litera* f) {
   if(o != NULL) delete o;
 }
 // #(no,n1) возвращает побитовое NOT
-void no(litera* f) {
+// NOt
+void Trac::no(litera* f) {
   litera* ptr = param(f,1);
   int a1 = strtol(ptr,NULL,radix);
   litera* o = new litera[34];
@@ -349,7 +371,8 @@ void no(litera* f) {
   if(o != NULL) delete o;
 }
 // #(bs,n1,n2) возвращает n1 сдвинутое влево на n2 бит
-void bs(litera* f) {
+// Bit Shift left
+void Trac::bs(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -362,7 +385,8 @@ void bs(litera* f) {
   if(o != NULL) delete o;
 }
 // #(br,n1,n2) возвращает n1 сдвинутое вправо на n2 бит
-void br(litera* f) {
+// Bit shift Right
+void Trac::br(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
@@ -378,11 +402,13 @@ void br(litera* f) {
 //// Отладка
 
 // #(np,smth) нет операции, можно использовать для временного скрытия кода
-void np(litera* f) {
+// No oPeration
+void Trac::np(litera* f) {
   return;
 }
 // #(nl,s) возвращает список имен форм, s - делимитер между именами
-void nl(litera* f) {
+// Name List
+void Trac::nl(litera* f) {
   litera* ptr = param(f,1);
   litera dl = (ptr == NULL)? ' ' : ptr[0];
   for(int i = 0; i < formlength; i++) {
@@ -392,25 +418,29 @@ void nl(litera* f) {
   if(ptr != NULL) delete ptr;
 }
 // #(pb,s) возвращает содержимое формы с именем s
-void pb(litera* f) {
+// ???
+void Trac::pb(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if( ref != -1 ) { R.push(F[ref].value); }                 // TODO сформатировать отладочнгый вывод
   if( ptr != NULL ) delete ptr;
 }
 // #(tr) начать трассировку
-void tr(litera* f) {
+// TRace on
+void Trac::tr(litera* f) {
   trace = true;
 }
 // #(tf) закончить трассировку
-void tf(litera* f) {
+// Trace ofF
+void Trac::tf(litera* f) {
   trace = false;
 }
 
 //// Формы
 
 // #(ds,n,s) создает форму с именем n и значением s. Возвращает пустую строку
-void ds(litera* f) {
+// Define String
+void Trac::ds(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   formadd( ptr, ptr1);
@@ -419,7 +449,8 @@ void ds(litera* f) {
 }
 // #(ss,n,d1,...,dn) нарезка формы с именем N на сегменты ограниченные цепочками
 // dx. Возвращает пустую строку
-void ss(litera* f) {
+// String Segmentation
+void Trac::ss(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ptr != NULL) delete ptr;
@@ -435,7 +466,8 @@ void ss(litera* f) {
   }
 }
 // #(cl,n,d1,...,dn) вызывает форму n как функцию с параметрами dx
-void cl(litera* f) {
+// CalL
+void Trac::cl(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ptr != NULL) delete ptr;
@@ -454,7 +486,8 @@ void cl(litera* f) {
 }
 // #(cs,n,Z) вызов формы с именем N как список. Возвращает одну "следующую"
 // запись из списка. Если записей нет или они закончились возвращает Z
-void cs(litera* f) {
+// ???
+void Trac::cs(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ptr != NULL) delete ptr;
@@ -484,7 +517,8 @@ void cs(litera* f) {
 }
 // #(cc,n,Z) вызов формы N как массив символов. Возвращает один"следующий"
 // символ. Если вернуть нечего возвращает Z
-void cc(litera* f) {
+// ???
+void Trac::cc(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ptr != NULL) delete ptr;
@@ -504,10 +538,12 @@ void cc(litera* f) {
 // #(cn,n,d,Z) вызов формы n как массив полей равной длины d. Возвращает d
 // символов, при отрицательном d выдаются символы слева от маркера при
 // положительном - справа. При ошибке возвращает Z
-void cn(litera* f) {}
+// ???
+void Trac::cn(litera* f) {}                                           // TODO
 // #(fd,n,s,Z) перемещение внутреннего указателя в форме n на начало
 // найденной в форме подстроки n. Возвращает пустую строку, а при ошибке - Z
-void fd(litera* f) {
+// FinD
+void Trac::fd(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int ref = findform(ptr);
@@ -519,14 +555,16 @@ void fd(litera* f) {
   if(ptr1 != NULL) delete ptr1;
 }
 // #(cr,n) обнуление внутреннего указателя в форме n. Возвращает пустую строку
-void cr(litera* f) {
+// Counter Reset
+void Trac::cr(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ref != -1) { F[ref].ptr = 0; }
   if(ptr != NULL) delete ptr;
 }
-// #(dd,n) удаление формы n. Возвращает пустую строку.
-void dd(litera* f) {
+// #(dd,n) удаление формы n. Возвращает пустую строку
+// ???
+void Trac::dd(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ref != -1) {
@@ -544,7 +582,8 @@ void dd(litera* f) {
   if(ptr != NULL) delete ptr;
 }
 // #(da) удаление всех форм. Возвращает пустую строку.
-void da(litera* f) {
+// Delete All forms
+void Trac::da(litera* f) {
   for(int i = 0; i < (formlength-1); i++) {
     if(F[i].value != NULL) delete F[i].value;
     if(F[i].name != NULL) delete F[i].name;
@@ -553,9 +592,12 @@ void da(litera* f) {
 }
 // #(sb,f,n1,...,nn) сохранение форм n1.. в блок на диске с именем f.
 // Возвращает пустую строку
-void sb(litera* f) {}
+// Save Block
+void Trac::sb(litera* f) {}                                           // TODO
 // #(fb,f) загрузить все формы из блока на диске с именем f.
 // Возвращает пустую строку
-void fb(litera* f) {}
+// Fetch Block
+void Trac::fb(litera* f) {}                                           // TODO
 // #(eb,f) удалить блок на диске с именем N. Возвращает пустую строку
-void eb(litera* f) {}
+// Erase Block
+void Trac::eb(litera* f) {}                                           // TODO

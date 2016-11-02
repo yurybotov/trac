@@ -328,13 +328,6 @@ void Trac::runstdtrac(int start) {
 					default: break;
 				}
 			break;
-//		  case (litera)'u':
-//				switch(first[1]){
-//					case (litera)'n': L.un(f); free(f); free(first); return;
-//					case (litera)'s': L.us(f); free(f); free(first); return;
-//					default: break;
-//				}
-//			break;
 		  case (litera)'x':
 				switch(first[1]){
 					case (litera)'r': L.xr(f); free(f); free(first); return;

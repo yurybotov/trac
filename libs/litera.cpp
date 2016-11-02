@@ -12,7 +12,7 @@ litera* litchr(litera* s, litera c) { return strchr(s,c); }
 #endif
 
 #if CHARSIZE == UNICODE
-int litlen(litera* s) {}           // big TODO
+int litlen(litera* s) {}                                            // big TODO
 litera* litcpy(litera* d, litera* s) {}
 litera* litncpy(litera* d, litera* s, int n) {}
 int litcmp(litera* d, litera* s) {}
