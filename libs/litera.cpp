@@ -1,5 +1,6 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
+#include <string>
 //#if CHARSIZE == ANSI
 //typedef char	litera;
 //#endif
