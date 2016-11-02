@@ -76,5 +76,6 @@ void eb(litera*);  // удалить блок на диске с именем N.
 
 litera* loads(void);          // для rs
 litera* formcall(litera*, litera*); // для cl
+int findform(litera*);
 
 #endif // __TRACLIB_H__

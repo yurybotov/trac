@@ -21,7 +21,7 @@ litera* Trac::loads() {
 void replaceall( litera* s, litera* find, litera* replace) {
   RingBuf& tmp = *new RingBuf(NBUFSIZE);
   for(int i = 0; i < litlen(s); i++) {
-    if(s[i] == f[0]) {
+    if(s[i] == find[0]) {
       bool have = true;
       for(int j = 1; j < litlen(find); j++) {
         have &= s[i+j-1] == find[j];
@@ -39,7 +39,16 @@ void replaceall( litera* s, litera* find, litera* replace) {
   }
   delete s;
   s = tmp.asstring();
-  delete tmp;
+  delete &tmp;
+}
+
+// ищет номер формы по имени
+int Trac::findform(litera* n) {
+  uint16_t h = hash(n), res = -1;
+  for(int i = 0; i < formlength; i++) {
+    if( F[i].hash == h && !litcmp(F[i].name, n)) {res = i; break;}
+  }                                           //  TODO strncmp для unicode
+  return res;
 }
 
 litera* Trac::formcall(litera* fst, litera* f) {
@@ -65,15 +74,6 @@ uint16_t hash(litera* s) {
     a = ((a << 3) ^ i) + (uint16_t)s[i];
   }
   return a;
-}
-
-// ищет номер формы по имени
-int Trac::findform(litera* n) {
-  uint16_t h = hash(n), res = -1;
-  for(int i = 0; i < formlength; i++) {
-    if( F[i].hash == h && !litcmp(F[i].name, n)) {res = i; break;}
-  }                                           //  TODO strncmp для unicode
-  return res;
 }
 
 // добавляет форму
@@ -124,6 +124,7 @@ void Trac::hl(litera* f) {
 void Trac::eq(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
+  litera* ptr2;
   if (litcmp(ptr, ptr1) == 0) {
     ptr2 = param(f,3);
   } else {
@@ -139,6 +140,7 @@ void Trac::eq(litera* f) {
 void Trac::gr(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
+  litera* ptr2;
   if (litcmp(ptr, ptr1) > 0) {
     ptr2 = param(f,3);
   } else {
@@ -154,6 +156,7 @@ void Trac::gr(litera* f) {
 void Trac::lt(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
+  litera* ptr2;
   if (litcmp(ptr, ptr1) < 0) {
     ptr2 = param(f,3);
   } else {
