@@ -31,6 +31,7 @@ class Trac {
   void runexttrac(litera* first,litera* f); // вызов встроенной функции расширенного синтаксиса
 #endif
 	void runuser(litera* first,litera* f); // вызов пользовательской функции
+  int searchparent(void);    // поиск парной скобки
 
 	litera meta;      // символ разделитель ввода
   bool notstop;     // признак того что вычисления продолжаются

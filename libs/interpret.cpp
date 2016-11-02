@@ -47,7 +47,7 @@ void Trac::run(void){
 			} else {
 				h = stdout;
 			}
-			while(O.len > 0) {
+			while(O.length() > 0) {
 				fputc(O.get(),h);
 			}
 		}
@@ -77,7 +77,7 @@ void Trac::run(void){
 }
 
 // поиск парной скобки
-int searchparent(void) {
+int Trac::searchparent(void) {
   int cnt = 0;
   for (int i = 0; i < A.length(); i++) {
     if (A.peek(i) == ((litera)'(')) { cnt++; } else {
@@ -126,22 +126,22 @@ void Trac::doStep(void){
 				}
 				else {
 					// если ##( - вставляем признак нейтральной функции
-					if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'#') && A.peek(2) == ((litera)'(') {
+					if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'#') && A.peek(2) == ((litera)'(')) {
 						A.dropfirst();A.dropfirst();A.dropfirst();
-						N.push(NEYTRALFUNC);
+						N.push(NEYTRALFUN);
 					}
 					else {
 						// если #( - вставляем признак активной функции
-						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'(')) {
+						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'('))) {
 							A.dropfirst();A.dropfirst();
-							N.push(ACTIVEFUNC);
+							N.push(ACTIVEFUN);
 						}
 						else {
 							// если ) - зпускаем функцию на выполнение
 							if (A.peek(0) == ((litera)')')) {
 								A.dropfirst();
 								N.push(NEXTPARAM);
-								N.push(ENDFUNC);
+								N.push(ENDFUN);
 								execute(); // вызов функции
 							}
 							else {
@@ -205,7 +205,7 @@ litera* param(litera* start, int n) {
 }
 
 void Trac::runstdtrac(int start) {
-	litera* f = N.cutend(fstart);
+	litera* f = N.cutend(start);
 	litera* first = param(f,0);
 	if(first[2] == 0) {
 	  switch(first[0]) {
@@ -358,7 +358,7 @@ void Trac::runexttrac(litera* first, litera* f) {
 		if(first[0] == (litera)'!') { no(f); delete f; delete first; return;}
 		if(first[0] == (litera)'=') { eq(f); delete f; delete first; return;}
 		if(first[0] == (litera)'<') { lt(f); delete f; delete first; return;}
-		if(first[0] == (litera)'>') { gt(f); delete f; delete first; return;}
+		if(first[0] == (litera)'>') { gr(f); delete f; delete first; return;}
 	}
 	if(first[2] == 0) {
 		if(first[0] == (litera)'<' && first[1] == (litera)'<') { bs(f); delete f; delete first; return;}
