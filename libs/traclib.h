@@ -72,5 +72,5 @@ void eb(litera*);  // удалить блок на диске с именем N.
 
 // другое
 
-litera* Trac::loads(void);          // для rs
+litera* loads(void);          // для rs
 litera* formcall(litera*, litera*); // для cl
