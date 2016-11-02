@@ -22,10 +22,10 @@ Trac::Trac(void) {
 	inoffset = 0;
 	litcpy(out,"stdout");
 	#if CHARSIZE == UNICODE
-	  litcpy(idle,u8"#(ps,#(rs))");
+	  idle =u8"#(ps,#(rs))";
 	#endif
 	#if CHARSIZE == ANSI
-	  litcpy(idle,"#(ps,#(rs))");
+	  idle = "#(ps,#(rs))";
 	#endif
 }
 
@@ -132,7 +132,7 @@ void Trac::doStep(void){
 					}
 					else {
 						// если #( - вставляем признак активной функции
-						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'()')) {
+						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'(')) {
 							A.dropfirst();A.dropfirst();
 							N.push(ACTIVEFUN);
 						}

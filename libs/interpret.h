@@ -3,6 +3,7 @@
 
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
+#include <string>
 #endif
 
 #include "litera.h"
@@ -37,7 +38,7 @@ class Trac {
   bool notstop;     // признак того что вычисления продолжаются
   bool trace;       // признак отладочной трассировки
   int radix;        // система счисления
-  litera idle[MAXFILEPATH];  // код выполняемый пока нет ввода пользователя
+  string idle;  // код выполняемый пока нет ввода пользователя
   bool z;           // признак наличия ошибки в вызываемой функции
   char in[MAXFILEPATH];    // откуда берутся данные
   long inoffset;    // сдвиг в файле
