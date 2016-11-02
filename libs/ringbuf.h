@@ -22,8 +22,8 @@ public:
 	int indexof(litera c); // возращает адрес первого вхождения
 	int lastindexof(litera c); // возращает адрес последнего вхождения
 
-	void push(litera* s); // добавить в конец
-	void put(litera* s);	// добавить в начало
+	void push(const litera* s); // добавить в конец
+	void put(const litera* s);	// добавить в начало
 
 	litera* cutstart(int n); // отрезать и вернуть построку с начала длиной n
 	litera* cutend(int n); // отрезать и вернуть построку сконца начиная с символа номер n
