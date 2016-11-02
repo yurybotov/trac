@@ -109,14 +109,14 @@ int Trac::formadd(litera* fname, litera* fform) {
 // ReseT
 void Trac::rt(litera* f) {     // TODO в разных сборках по разному
   N.clear();
-  A.push(idle);
+  A.push(idle.c_str());
   z = false;
 }
 // #(hl) остановка
 // HalT
 void Trac::hl(litera* f) {
   N.clear();
-  A.push(idle);
+  A.push(idle.c_str());
   z = false;
 }
 // #(eq,a,b,than,else) сравнение если a == b
