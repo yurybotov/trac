@@ -1,6 +1,12 @@
 #ifndef __INTERPRET_H__
 #define __INTERPRET_H__
 
+#if TARGET == LINUX
+#include "../linux/projectcfg.h"
+#endif
+
+#include "ringbuf.h"
+
 struct form {
   uint16_t hash;
   litera* name;
