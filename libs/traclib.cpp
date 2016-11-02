@@ -333,7 +333,7 @@ void Trac::an(litera* f) {
 }
 // #(or,n1,n2) возвращает побитовое ИЛИ
 // OR
-void Trac::or(litera* f) {
+void Trac::or_(litera* f) {
   litera* ptr = param(f,1);
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);

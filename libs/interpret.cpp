@@ -210,127 +210,127 @@ void Trac::runstdtrac(int start) {
 	  switch(first[0]) {
 		  case (litera)'a':
 		  switch(first[1]){
-			  case (litera)'d': L.ad(f); free(f); free(first); return;
-			  case (litera)'n': L.an(f); free(f); free(first); return;
+			  case (litera)'d': ad(f); free(f); free(first); return;
+			  case (litera)'n': an(f); free(f); free(first); return;
 			  default: break;
 		  }
 		  break;
 		  case (litera)'b':
 				switch(first[1]){
-					case (litera)'r': L.br(f); free(f); free(first); return;
-					case (litera)'s': L.bs(f); free(f); free(first); return;
+					case (litera)'r': br(f); free(f); free(first); return;
+					case (litera)'s': bs(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'c':
 				switch(first[1]){
-					case (litera)'c': L.cc(f); free(f); free(first); return;
-					case (litera)'l': L.cl(f); free(f); free(first); return;
-					case (litera)'m': L.cm(f); free(f); free(first); return;
-					case (litera)'n': L.cn(f); free(f); free(first); return;
-					case (litera)'r': L.cr(f); free(f); free(first); return;
-					case (litera)'s': L.cs(f); free(f); free(first); return;
+					case (litera)'c': cc(f); free(f); free(first); return;
+					case (litera)'l': cl(f); free(f); free(first); return;
+					case (litera)'m': cm(f); free(f); free(first); return;
+					case (litera)'n': cn(f); free(f); free(first); return;
+					case (litera)'r': cr(f); free(f); free(first); return;
+					case (litera)'s': cs(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'d':
 				switch(first[1]){
-					case (litera)'a': L.da(f); free(f); free(first); return;
-					case (litera)'d': L.dd(f); free(f); free(first); return;
-					case (litera)'s': L.ds(f); free(f); free(first); return;
-					case (litera)'v': L.dv(f); free(f); free(first); return;
+					case (litera)'a': da(f); free(f); free(first); return;
+					case (litera)'d': dd(f); free(f); free(first); return;
+					case (litera)'s': ds(f); free(f); free(first); return;
+					case (litera)'v': dv(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'e':
 				switch(first[1]){
-					case (litera)'b': L.eb(f); free(f); free(first); return;
-					case (litera)'q': L.eq(f); free(f); free(first); return;
+					case (litera)'b': eb(f); free(f); free(first); return;
+					case (litera)'q': eq(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'f':
 				switch(first[1]){
-					case (litera)'b': L.fb(f); free(f); free(first); return;
-					case (litera)'d': L.fd(f); free(f); free(first); return;
+					case (litera)'b': fb(f); free(f); free(first); return;
+					case (litera)'d': fd(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'g':
 				switch(first[1]){
-					case (litera)'m': L.gm(f); free(f); free(first); return;
-					case (litera)'r': L.gr(f); free(f); free(first); return;
+					case (litera)'m': gm(f); free(f); free(first); return;
+					case (litera)'r': gr(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'h':
 				switch(first[1]){
-					case (litera)'l': L.hl(f); free(f); free(first); return;
+					case (litera)'l': hl(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'l':
 				switch(first[1]){
-					case (litera)'t': L.lt(f); free(f); free(first); return;
+					case (litera)'t': lt(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'m':
 				switch(first[1]){
-					case (litera)'l': L.ml(f); free(f); free(first); return;
+					case (litera)'l': ml(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'n':
 				switch(first[1]){
-					case (litera)'l': L.nl(f); free(f); free(first); return;
-					case (litera)'o': L.no(f); free(f); free(first); return;
-					case (litera)'p': L.np(f); free(f); free(first); return;
+					case (litera)'l': nl(f); free(f); free(first); return;
+					case (litera)'o': no(f); free(f); free(first); return;
+					case (litera)'p': np(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'o':
 				switch(first[1]){
-					case (litera)'r': L.or(f); free(f); free(first); return;
+					case (litera)'r': or_(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'p':
 				switch(first[1]){
-					case (litera)'b': L.pb(f); free(f); free(first); return;
-					case (litera)'s': L.ps(f); free(f); free(first); return;
+					case (litera)'b': pb(f); free(f); free(first); return;
+					case (litera)'s': ps(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'r':
 				switch(first[1]){
-					case (litera)'c': L.rc(f); free(f); free(first); return;
-					case (litera)'s': L.rs(f); free(f); free(first); return;
-					case (litera)'t': L.rt(f); free(f); free(first); return;
-					case (litera)'x': L.rx(f); free(f); free(first); return;
+					case (litera)'c': rc(f); free(f); free(first); return;
+					case (litera)'s': rs(f); free(f); free(first); return;
+					case (litera)'t': rt(f); free(f); free(first); return;
+					case (litera)'x': rx(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'s':
 				switch(first[1]){
-					case (litera)'b': L.sb(f); free(f); free(first); return;
-					case (litera)'i': L.si(f); free(f); free(first); return;
-					case (litera)'o': L.so(f); free(f); free(first); return;
-					case (litera)'s': L.ss(f); free(f); free(first); return;
-					case (litera)'u': L.su(f); free(f); free(first); return;
+					case (litera)'b': sb(f); free(f); free(first); return;
+					case (litera)'i': si(f); free(f); free(first); return;
+					case (litera)'o': so(f); free(f); free(first); return;
+					case (litera)'s': ss(f); free(f); free(first); return;
+					case (litera)'u': su(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'t':
 				switch(first[1]){
-					case (litera)'f': L.tf(f); free(f); free(first); return;
-					case (litera)'r': L.tr(f); free(f); free(first); return;
+					case (litera)'f': tf(f); free(f); free(first); return;
+					case (litera)'r': tr(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
 		  case (litera)'x':
 				switch(first[1]){
-					case (litera)'r': L.xr(f); free(f); free(first); return;
+					case (litera)'r': xr(f); free(f); free(first); return;
 					default: break;
 				}
 			break;
@@ -347,22 +347,22 @@ void Trac::runstdtrac(int start) {
 #if EXTENDEDSYNTAX == TRUE
 void Trac::runexttrac(litera* first, litera* f) {
   if(first[1] == 0) {
-		if(first[0] == (litera)'+') { L.ad(f); free(f); free(first); return;}
-		if(first[0] == (litera)'-') { L.sb(f); free(f); free(first); return;}
-		if(first[0] == (litera)'*') { L.ml(f); free(f); free(first); return;}
-		if(first[0] == (litera)'/') { L.dv(f); free(f); free(first); return;}
-		if(first[0] == (litera)'&') { L.an(f); free(f); free(first); return;}
-		if(first[0] == (litera)'|') { L.or(f); free(f); free(first); return;}
-		if(first[0] == (litera)'^') { L.xr(f); free(f); free(first); return;}
-		if(first[0] == (litera)'!') { L.no(f); free(f); free(first); return;}
-		if(first[0] == (litera)'=') { L.eq(f); free(f); free(first); return;}
-		if(first[0] == (litera)'<') { L.lt(f); free(f); free(first); return;}
-		if(first[0] == (litera)'>') { L.gt(f); free(f); free(first); return;}
+		if(first[0] == (litera)'+') { ad(f); free(f); free(first); return;}
+		if(first[0] == (litera)'-') { sb(f); free(f); free(first); return;}
+		if(first[0] == (litera)'*') { ml(f); free(f); free(first); return;}
+		if(first[0] == (litera)'/') { dv(f); free(f); free(first); return;}
+		if(first[0] == (litera)'&') { an(f); free(f); free(first); return;}
+		if(first[0] == (litera)'|') { or_(f); free(f); free(first); return;}
+		if(first[0] == (litera)'^') { xr(f); free(f); free(first); return;}
+		if(first[0] == (litera)'!') { no(f); free(f); free(first); return;}
+		if(first[0] == (litera)'=') { eq(f); free(f); free(first); return;}
+		if(first[0] == (litera)'<') { lt(f); free(f); free(first); return;}
+		if(first[0] == (litera)'>') { gt(f); free(f); free(first); return;}
 	}
 	if(first[2] == 0) {
-		if(first[0] == (litera)'<' && first[1] == (litera)'<') { L.bs(f); free(f); free(first); return;}
-		if(first[0] == (litera)'>' && first[1] == (litera)'>') { L.br(f); free(f); free(first); return;}
-		if(first[0] == (litera)'=' && first[1] == (litera)'=') { L.eq(f); free(f); free(first); return;}
+		if(first[0] == (litera)'<' && first[1] == (litera)'<') { bs(f); free(f); free(first); return;}
+		if(first[0] == (litera)'>' && first[1] == (litera)'>') { br(f); free(f); free(first); return;}
+		if(first[0] == (litera)'=' && first[1] == (litera)'=') { eq(f); free(f); free(first); return;}
 	}
 	runuser(first,f);
 }
