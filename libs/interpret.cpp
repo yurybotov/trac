@@ -94,7 +94,7 @@ void Trac::doStep(void){
 	// если активная строка пуста - рестарт
 	if (A.length() == 0) {
 		N.clear();
-		A.push(idle);
+		A.push(idle.c_str());
 		z = false;
 	} else {
 		//  если ( - ищем закрывающую скобку и все это вместе уносим в нейтральную цепочку (без скобок)
@@ -104,7 +104,7 @@ void Trac::doStep(void){
 			// если не нашли закрывающую скобку - рестарт
 			if(parent == -1) {
 				N.clear();
-				A.push(idle);
+				A.push(idle.c_str());
 				z = false;
 				return;
 			}
