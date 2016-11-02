@@ -93,11 +93,10 @@ int Trac::formadd(litera* fname, litera* fform) {
       // если формы с таким именем нет - создаем новую
       struct form* f = forms + formlength;
       f->hash = hash(fname);
-      F[ref].name = new litera(litlen(fname)+1);
-      litcpy(F[ref].name, fname);
-      F[ref].value = new litera(litlen(fform)+1);
-      litcpy(F[ref].value, fform);
-      strncpy(f->name, fname, 8);
+      f->name = new litera(litlen(fname)+1);
+      litcpy(f->name, fname);
+      f->value = new litera(litlen(fform)+1);
+      litcpy(f->value, fform);
       f->ptr = 0;
       f->css = 0;
       formlength++;
@@ -202,7 +201,7 @@ void Trac::rs(litera* f) {
 // Возвращает этот символ или Z если ошибка
 // Read Character
 void Trac::rc(litera* f) {
-  if(I.lenпер() > 0) {
+  if(I.length() > 0) {
     R.push( I.get());
   } else {
     z = true;
