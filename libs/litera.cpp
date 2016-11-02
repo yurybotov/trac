@@ -1,6 +1,5 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
-#include <string>
 //#if CHARSIZE == ANSI
 //typedef char	litera;
 //#endif
@@ -11,6 +10,7 @@
 
 #include "litera.h"
 #include <cstring>
+#include <string>
 
 #if CHARSIZE == ANSI
 int litlen(litera* s) { return strlen((char*)s);}
