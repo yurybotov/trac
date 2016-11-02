@@ -50,7 +50,8 @@ class Trac {
   struct form F[MAXFORMS]; // хранилище форм
   int formlength;         // количество форм в нем
 
-  #include "traclib.h"    // встроенные функции trac
+  // встроенные функции trac
+  #include "traclib.h"
 };
 
 litera* param(litera*, int);

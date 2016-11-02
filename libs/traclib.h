@@ -1,3 +1,5 @@
+#ifndef __TRACLIB_H__
+#define __TRACLIB_H__
 //// управление выполнением
 void rt(litera*);  // ресет
 void hl(litera*);  // остановка
@@ -74,3 +76,5 @@ void eb(litera*);  // удалить блок на диске с именем N.
 
 litera* loads(void);          // для rs
 litera* formcall(litera*, litera*); // для cl
+
+#endif // __TRACLIB_H__
