@@ -80,7 +80,7 @@ typedef char		litera;
 #define ACTIVEFUN	((litera)18)
 #define NEYTRALFUN	((litera)19)
 #define ENDFUN		((litera)20)
-#define FORMBRAKE ((litera)17)
+#define FORMBREAK ((litera)17)
 
 #elif CHARSIZE == UNICODE
 typedef uint16_t	litera;
@@ -88,7 +88,7 @@ typedef uint16_t	litera;
 #define ACTIVEFUN	((litera)0xee18)
 #define NEYTRALFUN	((litera)0xee19)
 #define ENDFUN		((litera)0xee20)
-#define FORMBRAKE ((litera)0xee17)
+#define FORMBREAK ((litera)0xee17)
 #endif
 
 #endif // __PROJECTCFG_H__

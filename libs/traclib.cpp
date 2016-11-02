@@ -1,5 +1,6 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
+#include <stdlib.h>
 #endif
 
 #include "interpret.h"
