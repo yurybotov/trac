@@ -81,9 +81,8 @@ typedef char		litera;
 #define NEYTRALFUN	((litera)19)
 #define ENDFUN		((litera)20)
 #define FORMBRAKE ((litera)17)
-#endif
 
-#if CHARSIZE == UNICODE
+#elif CHARSIZE == UNICODE
 typedef uint16_t	litera;
 #define NEXTPARAM	((litera)0xee17)
 #define ACTIVEFUN	((litera)0xee18)
