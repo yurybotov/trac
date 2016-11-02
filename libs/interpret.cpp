@@ -38,7 +38,7 @@ void Trac::run(void){
 	  if(O.length() > 0) {
 			FILE* h;
 			if(out =="stdout") {
-				h = fopen(in,"a+");
+				h = fopen(out.c_str(),"a+");
 			} else {
 				h = stdout;
 			}
@@ -52,7 +52,7 @@ void Trac::run(void){
 	  if(I.length() < IBUFSIZE-1) {
 			FILE* h;
 			if(in == "stdin") {
-				h = fopen(in,"r");
+				h = fopen(in.c_str(),"r");
 				fseek( h, inoffset, SEEK_SET );
 			} else {
 				h = stdin;
