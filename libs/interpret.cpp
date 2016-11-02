@@ -132,7 +132,7 @@ void Trac::doStep(void){
 					}
 					else {
 						// если #( - вставляем признак активной функции
-						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'('))) {
+						if (A.peek(0) == ((litera)'#') && A.peek(1) == ((litera)'()')) {
 							A.dropfirst();A.dropfirst();
 							N.push(ACTIVEFUN);
 						}
@@ -159,8 +159,8 @@ void Trac::doStep(void){
 void Trac::execute(void) {
 	litera* ptr;
 	// ищем начало функции в нейтральной цепочке
-	int af = N.lastindexof(ACTIVEFUNC);
-	int nf = N.lastindexof(NEYTRALFUNC);
+	int af = N.lastindexof(ACTIVEFUN);
+	int nf = N.lastindexof(NEYTRALFUN);
 	int fstart = (af > nf) ? af : nf;
 	if(fstart > -1) {
 		// запускаем стандартный обработчик функций
@@ -168,7 +168,7 @@ void Trac::execute(void) {
 		// помещение результата функции если он не пустой
 		if( R.length() > 0) {
 			ptr = R.asstring();
-			if (N.peek(fstart) == NEYTRALFUNC && z == false) {
+			if (N.peek(fstart) == NEYTRALFUN && z == false) {
 				// если нейтральная функция то в конец нейтральной цепочки
 				N.push(ptr);
 			}
