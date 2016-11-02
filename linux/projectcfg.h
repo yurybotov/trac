@@ -50,7 +50,7 @@
 #define MAXFORMS	1024
 // Максимальная длина пути к файлу и имени файла
 #define MAXFILEPATH	256
-#include <stdint.h>
+#include <cstdint>
 #endif // TARGET == LINUX
 
 #if TARGET == ESP8266
@@ -89,6 +89,12 @@ typedef uint16_t	litera;
 #define NEYTRALFUN	((litera)0xee19)
 #define ENDFUN		((litera)0xee20)
 #define FORMBREAK ((litera)0xee17)
+#endif
+
+#if FLOATINGPOINT == TRUE
+typedef float num;
+#else
+typedef int num;
 #endif
 
 #endif // __PROJECTCFG_H__

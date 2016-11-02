@@ -260,8 +260,8 @@ void Trac::ad(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1+a2,o,radix);
+  litera* o = num2lit(a1+a2,radix);
+  //itoa(a1+a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -274,8 +274,9 @@ void Trac::su(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1-a2,o,radix);
+  litera* o = num2lit(a1-a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1-a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -288,8 +289,9 @@ void Trac::ml(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1*a2,o,radix);
+  litera* o = num2lit(a1*a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1*a2,o,radix);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -311,8 +313,9 @@ void Trac::dv(litera* f) {
     if(ptr2 != NULL) delete ptr2;
     return;
   }
-  litera* o = new litera[34];
-  itoa(a1/a2,o,10);
+  litera* o = num2lit(a1/a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1/a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -328,8 +331,9 @@ void Trac::an(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1&a2,o,10);
+  litera* o = num2lit(a1&a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1&a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -342,8 +346,9 @@ void Trac::or_(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1|a2,o,10);
+  litera* o = num2lit(a1|a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1|a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -356,8 +361,9 @@ void Trac::xr(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1^a2,o,10);
+  litera* o = num2lit(a1^a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1^a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -368,8 +374,9 @@ void Trac::xr(litera* f) {
 void Trac::no(litera* f) {
   litera* ptr = param(f,1);
   int a1 = strtol(ptr,NULL,radix);
-  litera* o = new litera[34];
-  itoa(!a1,o,10);
+  //litera* o = new litera[34];
+  litera* o = num2lit(!a1,radix);
+  //itoa(!a1,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(o != NULL) delete o;
@@ -381,8 +388,9 @@ void Trac::bs(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1<<a2,o,10);
+  litera* o = num2lit(a1<<a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1<<a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
@@ -395,8 +403,9 @@ void Trac::br(litera* f) {
   litera* ptr1 = param(f,2);
   int a1 = strtol(ptr,NULL,radix);
   int a2 = strtol(ptr1,NULL,radix);
-  litera* o = new litera[34];
-  itoa(a1>>a2,o,10);
+  litera* o = num2lit(a1>>a2,radix);
+  //litera* o = new litera[34];
+  //itoa(a1>>a2,o,10);
   R.push(o);
   if(ptr != NULL) delete ptr;
   if(ptr1 != NULL) delete ptr1;
