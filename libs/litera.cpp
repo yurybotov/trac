@@ -18,8 +18,12 @@ litera* litncpy(litera* d, litera* s, int n) { return (char*) strncpy((char*)d,(
 int litcmp(litera* d, litera* s) { return strcmp((char*)d,(char*)s); }
 litera* litlit(litera* s, litera* sub) { return (litera*)strstr((char*)s, (char*)sub); }
 litera* litchr(litera* s, litera c) { return (litera*)strchr((char*)s,(char)c); }
-litera* num2lit(num i, int r) { return (litera*)NULL; }
-litera* int2lit(int i, int r) { return (litera*)NULL; }
+#if FLOATINGPOINT == TRUE
+litera* num2lit(num f, int r) { string s = to_string(f); return s.c_str(); }
+#else
+litera* num2lit(num i, int r) { string s = to_string(i); return s.c_str(); }
+#endif
+litera* int2lit(int i, int r) { string s = to_string(i); return s.c_str(); }
 
 #elif CHARSIZE == UNICODE
 int litlen(litera* s) { return 0;}                                  // big TODO
@@ -28,6 +32,10 @@ litera* litncpy(litera* d, litera* s, int n) {return (litera*)NULL;}
 int litcmp(litera* d, litera* s) { return 0;}
 litera* litlit(litera* s, litera* sub) {return (litera*)NULL;}
 litera* litchr(litera* s, litera c) {return (litera*)NULL;}
-litera* num2lit(num i, int r) { return (litera*)NULL; }
-litera* int2lit(int i, int r) { return (litera*)NULL; }
+#if FLOATINGPOINT == TRUE
+litera* num2lit(num f, int r) { string s = to_string(f); return s.c_str(); }
+#else
+litera* num2lit(num i, int r) { string s = to_string(i); return s.c_str(); }
+#endif
+litera* int2lit(int i, int r) { string s = to_string(i); return s.c_str(); }
 #endif
