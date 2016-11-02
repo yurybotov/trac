@@ -1,7 +1,7 @@
 #if TARGET == LINUX
 #include "../linux/projectcfg.h"
 #include <new>
-#include <stdio>
+#include <stdio.h>
 #endif
 
 #include "interpret.h"
