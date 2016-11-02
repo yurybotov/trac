@@ -44,7 +44,8 @@ void replaceall( litera* s, litera* find, litera* replace) {
 
 // ищет номер формы по имени
 int Trac::findform(litera* n) {
-  uint16_t h = hash(n), res = -1;
+  uint16_t h = hash(n);
+  int res = -1;
   for(int i = 0; i < formlength; i++) {
     if( F[i].hash == h && !litcmp(F[i].name, n)) {res = i; break;}
   }                                           //  TODO strncmp для unicode
@@ -68,7 +69,7 @@ litera* Trac::formcall(litera* fst, litera* f) {
 }
 
 // вычисляет хэш для формы
-uint16_t hash(litera* s) {
+uint16_t Trac::hash(litera* s) {
   uint16_t a = 0;
   for (int i = 0; i < litlen(s); i++) {
     a = ((a << 3) ^ i) + (uint16_t)s[i];
@@ -201,7 +202,7 @@ void Trac::rs(litera* f) {
 // Возвращает этот символ или Z если ошибка
 // Read Character
 void Trac::rc(litera* f) {
-  if(I.len > 0) {
+  if(I.lenпер() > 0) {
     R.push( I.get());
   } else {
     z = true;
@@ -462,7 +463,7 @@ void Trac::ss(litera* f) {
     for(int i = 2; true ; i++) {
       litera* ptr = param(f,i);
       if(ptr != NULL) {
-        litera r[3]; r[0] = (litera)FORMBRAKE; r[1]=(litera)i-1; r[2]=(litera)0;
+        litera r[3]; r[0] = (litera)FORMBREAK; r[1]=(litera)i-1; r[2]=(litera)0;
         replaceall( F[ref].value, ptr, r);
         delete ptr;
       } else { break;}
@@ -506,7 +507,7 @@ void Trac::cs(litera* f) {
           break;
         }
       } else {
-        if(R.len == 0) {
+        if(R.length() == 0) {
           z = true;
           litera* ptr = param(f,2);
           R.push(ptr);
@@ -572,14 +573,14 @@ void Trac::dd(litera* f) {
   litera* ptr = param(f,1);
   int ref = findform(ptr);
   if(ref != -1) {
-    delete forms[ref].value;
-    delete forms[ref].name;
+    delete F[ref].value;
+    delete F[ref].name;
     for(int i = ref; i < (formlength-1); i++) {
-      forms[i].hash = forms[i+1].hash;
-      forms[i].name = forms[i+1].name;
-      forms[i].value = forms[i+1].value;
-      forms[i].ptr = forms[i+1].ptr;
-      forms[i].css = forms[i+1].css;
+      F[i].hash = F[i+1].hash;
+      F[i].name = F[i+1].name;
+      F[i].value = F[i+1].value;
+      F[i].ptr = F[i+1].ptr;
+      F[i].css = F[i+1].css;
     }
     formlength--;
   }
