@@ -9,7 +9,7 @@
 #endif
 
 #include "litera.h"
-#include <sstring>
+#include <cstring>
 
 #if CHARSIZE == ANSI
 int litlen(litera* s) { return strlen((char*)s);}
