@@ -21,24 +21,27 @@ litera* litlit(litera* s, litera* sub) { return (litera*)strstr((char*)s, (char*
 litera* litchr(litera* s, litera c) { return (litera*)strchr((char*)s,(char)c); }
 #if FLOATINGPOINT == TRUE
 litera* num2lit(num f, int r) {
-  string s = std::to_string((float)f);
-  litera* o = new litera(s.length()+1);
-  strcpy(o,s.c_str());
-  return (litera*)o;
+  //string s = std::to_string((float)f);
+  //litera* o = new litera(s.length()+1);
+  //strcpy(o,s.c_str());
+  //return o;
+  return NULL;
 }
 #else
 litera* num2lit(num i, int r) {
-  string s = std::to_string((int)i);
-  litera* o = new litera(s.length()+1);
-  strcpy(o,s.c_str());
-  return (litera*)o;
+  //string s = std::to_string((int)i);
+  //litera* o = new litera(s.length()+1);
+  //strcpy(o,s.c_str());
+  //return o;
+  return NULL;
 }
 #endif
 litera* int2lit(int i, int r) {
-  string s = std::to_string(i);
-  litera* o = new litera(s.length()+1);
-  strcpy(o,s.c_str());
-  return (litera*)o;
+  //string s = std::to_string(i);
+  //litera* o = new litera(s.length()+1);
+  //strcpy(o,s.c_str());
+  //return o;
+  return NULL;
 }
 
 #elif CHARSIZE == UNICODE
