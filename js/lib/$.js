@@ -1,4 +1,4 @@
-﻿// Микро библиотека работы с селекторами взамен jQuery или Zepto
+// Микро библиотека работы с селекторами взамен jQuery или Zepto
 
 (function (exports) {
 
@@ -22,7 +22,7 @@
         }
     }
 
-    var u$ = (function u$() {
+    var u$ = (function() {
 
         // конструктор - собственно создание объекта селектора
         // понимет селекторы:
@@ -35,7 +35,6 @@
         //    объектDOM - выбрать этот объект
         //    функция - запустить эту функцию без параметров только по окончании загрузки всей страницы
         function U$(id) {
-            var i = 0;
             this.res = [];
             this.u$ = true;
 
@@ -116,7 +115,7 @@
 
         // выполнить ИЛИ по отношении к существующим записям и записям нового селектора
         U$.fn.or = function (id) {
-            var arr = [], i = 0, j = 0, newres = [], exist = false;
+            var arr = [], i = 0, j = 0, exist = false;
             switch (typeof id) {
                 case 'object':
                     arr.push(id);
@@ -201,7 +200,7 @@
         // фильтрация - выбор подмассива из массива выбранных объектов. аргументы func как у each и она должна возвращать значение true для
         // выбора элемента и false для его отбрасывания
         U$.fn.filter = function (func) {
-            var arr = []
+            var arr = [];
             if (this.u$ && this.res.length > 0) {
                 for (var i = 0; i < this.res.length; i++) {
                     if (this.res[i]) {
@@ -217,14 +216,14 @@
 
         // прицепить к выбранным объектам обработчик события
         U$.fn.on = function (e, callback) {
-            this.each(function (o) { o.addEventListener(e, callback, false); })
+            this.each(function (o) { o.addEventListener(e, callback, false); });
             return this;
         };
         U$.fn.bind = U$.fn.on;
 
         // отсоединить обработчик события
         U$.fn.off = function (e, callback) {
-            this.each(function (o) { o.removeEventListener(e, callback, false); })
+            this.each(function (o) { o.removeEventListener(e, callback, false); });
             return this;
         };
         U$.fn.unbind = U$.fn.off;
@@ -269,7 +268,7 @@
         // удалить класс из выбранных объектов
         U$.fn.removeClass = function (className) {
             var r = new RegExp("(^|\\s)" + className + "(\\s|$)", "g");
-            this.each(function (o) { o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, ""); });
+            this.each(function (o) { o.className = o.className.replace(r, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, ""); });
             return this;
         };
 
@@ -294,18 +293,9 @@
                 }
             } else return null;
         };
-        U$.fn.item = function (index) {
-            if (this.u$ && this.res.length > 0) {
-                if (index) {
-                    return this.res[index];
-                } else {
-                    return this.res[0];
-                }
-            } else return null;
-        };
-
+        U$.fn.item = U$.fn.get;
+        
         return u$;
-
     })();
 
     exports.u$ = u$;
@@ -323,3 +313,5 @@
 //// для каждого элемента с классом "tegclass" у которого есть 'innerHTML' подцепить соответсвующий HTML код хрянащийся в localstorage
 //      $('.tagclass').attr('innerHTML').each( function(i) { i.innerHTML = localStorage(i.id)} );  
 //  }
+
+
