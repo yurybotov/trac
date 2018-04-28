@@ -1,352 +1,397 @@
 
-function Trac() {
-    var ibuf = '';
-    var abuf = '';
-    var nbuf = '';
-    var form = [];
-    var obuf = '';
-    //var pc = 0;
-    var worked = true;
-    var idle = '#(ps,#(rs))';
-    var Z = false;
-    var meta = '`';
-    var funcvalue = '';
+function _Trac() {
+    var _ibuf = '';
+    var _abuf = '';
+    var _nbuf = '';
+    var _form = [];
+    var _obuf = '';
+    var _worked = true;
+    const _idle = '#(ps,#(rs))';
+    var _Z = false;
+    var _meta = '`';
+    var _funcvalue = '';
     
-    // инициалиизация если надо будет перезапустить машину полностью
-    var reset = function() {
-        ibuf = '';
-        abuf = '';
-        nbuf = '';
-        form = [];
-        obuf = '';
-        //var pc = 0;
-        worked = true;
-        idle = '#(ps,#(rs))';
-        Z = false;
-        meta = '`';
-        funcvalue = '';
-    };
-
     // сокращенное обращение к первым трем символам активной строки с заменой 
     // результата на пустой если строка короче чем нужно
-    var c1 = function () { return (abuf.length > 0)? abuf[0]:''; };
-    var c2 = function () { return (abuf.length > 1)? abuf[1]:''; };
-    var c3 = function () { return (abuf.length > 2)? abuf[2]:''; };
+    var _c1 = function () { return (_abuf.length > 0)? _abuf[0]:''; };
+    var _c2 = function () { return (_abuf.length > 1)? _abuf[1]:''; };
+    var _c3 = function () { return (_abuf.length > 2)? _abuf[2]:''; };
     // удаление лидирующего символа активной строки
-    var next = function (n) { n = n? n: 1; if (abuf.length > 0) abuf = abuf.substr(n); };
+    var _next = function (_n) { _n = _n? _n : 1; if (_abuf.length > 0) _abuf = _abuf.substr(_n); };
     // если аргумент не представлен заменить его на ''
-    var get = function (strarr, i) { if (i > strarr.length - 1) return ''; else return strarr[i]; };
+    var _get = function (_strarr, _i) { if (_i > _strarr.length - 1) return ''; else return _strarr[_i]; };
     // вычисляет хэш для формы
-    var hash = function (s) { var a = 0; for (var i = 0; i < s.length; i++) { a = (a << 3) ^ i; } return a; };
+    var _hash = function (_s) { var _a = 0; for (var _i = 0; _i < _s.length; _i++) { _a = (_a << 3) ^ _i; } return _a; };
     // добавляет форму
-    var formadd = function (id, fname, fform, fptr, fcss) {
-        formdel([fname]);
-        form.push({ id: id, hash: hash(fname), name: fname, form: fform, ptr: fptr, css: fcss });
+    var _formadd = function (_id, _fname, _fform, _fptr, _fcss) {
+        _formdel([_fname]);
+        _form.push({ _id: _id, _hash: _hash(_fname), _name: _fname, _form: _fform, _ptr: _fptr, _css: _fcss });
     };
     // возвращает количество схраненных форм
-    var formlen = function () { return form.length; };
+    var _formlen = function () { return _form.length; };
     // сегментирует форму
-    var formseg = function (name, sarr) {
-        var h = hash(name), i, j;
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                for (j = 0; j < sarr.length; j++) {
-                    form[i].form = form[i].form.replace(new RegExp(sarr[j], 'g'), '\ufffc' + j);
+    var _formseg = function (_name, _sarr) {
+        var _h = _hash(_name), _i, _j;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                for (_j = 0; _j < _sarr.length; _j++) {
+                    _form[_i]._form = _form[_i]._form.replace(new RegExp(_sarr[_j], 'g'), '\ufffc' + _j);
                 }
                 break;
             }
         }
     };
     // вызывает функцию из формы
-    var formcall = function (name, sarr) {
-        var h = hash(name), s = '', i, j, f;
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                f = form[i].form;
-                if (sarr.length < s.css) {
-                    for (j = 0; j < sarr.length; j++) {
-                        f = f.replace(new RegExp('\ufffc' + j, 'g'), sarr[j]);
+    var _formcall = function (_name, _sarr) {
+        var _h = _hash(_name), _s = '', _i, _j, _f;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                _f = _form[_i]._form;
+                if (_sarr.length < _s._css) {
+                    for (_j = 0; _j < _sarr.length; _j++) {
+                        _f = _f.replace(new RegExp('\ufffc' + _j, 'g'), _sarr[_j]);
                     }
-                    for (j = sarr.length; j < s.css; j++) {
-                        f = f.replace(new RegExp('\ufffc' + j, 'g'), '');
+                    for (_j = _sarr.length; _j < _s._css; _j++) {
+                        _f = _f.replace(new RegExp('\ufffc' + _j, 'g'), '');
                     }
                 } else {
-                    for (j = 0; j < sarr.length; j++) {
-                        f = f.replace(new RegExp('\ufffc' + j, 'g'), sarr[j]);
+                    for (_j = 0; _j < _sarr.length; _j++) {
+                        _f = _f.replace(new RegExp('\ufffc' + _j, 'g'), _sarr[_j]);
                     }
                 }
-                return f;
+                return _f;
             }
         }
     };
     // достает из формы сегмент
-    var formcallseg = function (name, z) {
-        var h = hash(name), i, f;
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                f = form[i].form;
-                if (form[i].ptr >= f.length) { Z = true; return z; }
-                var j = f.indexOf('\ufffc', form[i].ptr);
-                if (j >= 0) {
-                    var ptr = form[i].ptr;
-                    form[i].ptr = j + 2;
-                    return f.substr(ptr, j - ptr);
+    var _formcallseg = function (_name, _z) {
+        var _h = _hash(_name), _i, _f, _j, _ptr;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                _f = _form[_i]._form;
+                if (_form[_i]._ptr >= _f.length) { _Z = true; return _z; }
+                _j = _f.indexOf('\ufffc', _form[_i]._ptr);
+                if (_j >= 0) {
+                    _ptr = _form[_i]._ptr;
+                    _form[_i]._ptr = _j + 2;
+                    return _f.substr(_ptr, _j - _ptr);
                 } else {
-                    var ptr = form[i].ptr;
-                    form[i].ptr = f.length;
-                    return f.substr(ptr);
+                    _ptr = _form[_i]._ptr;
+                    _form[_i]._ptr = _f.length;
+                    return _f.substr(_ptr);
                 }
             }
         }
     };
     // достает из формы символ
-    var formcallchr = function (name, z) {
-        var h = hash(name), i, j;
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                if (form[i].ptr >= form[i].form.length) { Z = true; return z; }
-                j = form[i].ptr;
-                if (form[i].form[j] === '\ufffc') { form[i].ptr += 2; j = form[i].ptr; }
-                form[i].ptr++;
-                return form[i].form[j];
+    var _formcallchr = function (_name, _z) {
+        var _h = _hash(_name), _i, _j;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                if (_form[_i]._ptr >= _form[_i]._form.length) { _Z = true; return _z; }
+                _j = _form[_i]._ptr;
+                if (_form[_i]._form[_j] === '\ufffc') { _form[_i]._ptr += 2; _j = _form[_i]._ptr; }
+                _form[_i]._ptr++;
+                return _form[_i]._form[_j];
             }
         }
     };
     // достает из формы символы
-    var formcallchrs = function (name, d, z) {
-        var h = hash(name), i, j, out = '';
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                if (d > 0) {
-                    for (j = 0; j < d; j++) {
-                        if (form[i].ptr >= form[i].form.length) { Z = true; return z; }
-                        if (form[i].form[form[i].ptr] === '\ufffc') { form[i].ptr += 2; if (form[i].ptr >= form[i].form.length) { Z = true; return z; } }
-                        out += form[i].form[form[i].ptr];
-                        form[i].ptr++;
+    var _formcallchrs = function (_name, _d, _z) {
+        var _h = _hash(_name), _i, _j, _out = '';
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                if (_d > 0) {
+                    for (_j = 0; _j < _d; _j++) {
+                        if (_form[_i]._ptr >= _form[_i]._form.length) { _Z = true; return _z; }
+                        if (_form[_i]._form[_form[_i]._ptr] === '\ufffc') { _form[_i]._ptr += 2; if (_form[_i]._ptr >= _form[_i]._form.length) { _Z = true; return _z; } }
+                        _out += _form[_i]._form[_form[_i]._ptr];
+                        _form[_i]._ptr++;
                     }
                 } else {
-                    for (j = 0; j > d; j--) {
-                        if (form[i].ptr <= 0) { Z = true; return z; }
-                        if (form[i].form[form[i].ptr - 1] === '\ufffc') { form[i].ptr -= 2; if (form[i].ptr <= 0) { Z = true; return z; } }
-                        out = form[i].form[form[i].ptr] + out;
-                        form[i].ptr--;
+                    for (_j = 0; _j > _d; _j--) {
+                        if (_form[_i]._ptr <= 0) { _Z = true; return _z; }
+                        if (_form[_i]._form[_form[_i]._ptr - 1] === '\ufffc') { _form[_i]._ptr -= 2; if (_form[_i]._ptr <= 0) { _Z = true; return _z; } }
+                        _out = _form[_i]._form[_form[_i]._ptr] + _out;
+                        _form[_i]._ptr--;
                     }
                 }
-                return out;
+                return _out;
             }
         }
     };
     // сбрасывает указатель формы
-    var formcallrest = function (name) {
-        var h = hash(name), i = 0;
-        for (i = 0; i < form.length; i++) {
-            if (h === form[i].hash && name === form[i].name) {
-                form[i].ptr = 0;
+    var _formcallrest = function (_name) {
+        var _h = _hash(_name), _i = 0;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                _form[_i]._ptr = 0;
+                break;
+            }
+        }
+    };
+    // ищет подстроку в форме и ставит на нее указатель
+    var _formsearch = function(_name,_substr,_z) {
+        var _h = _hash(_name), _i = 0, _ptr;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                _ptr = _form[_i]._form.indexOf(_substr);
+                if (_ptr === -1) { _Z = true; return _z; }
+                _form[_i]._ptr = _ptr;
                 break;
             }
         }
     };
     // удаляет формы
-    var formdel = function (sarr) {
-        var i, j, f, t;
-        for (i = 0; i < form.length; i++) {
-            f = form.shift();
-            t = true;
-            for (j = 0; j < sarr.length; j++) {
-                if (f.name === sarr[j]) t = false;
+    var _formdel = function (_sarr) {
+        var _i, _j, _f, _t;
+        for (_i = 0; _i < _form.length; _i++) {
+            _f = _form.shift();
+            _t = true;
+            for (_j = 0; _j < _sarr.length; _j++) {
+                if (_f._name === _sarr[_j]) _t = false;
             }
-            if (t) form.push(f);
+            if (_t) _form.push(_f);
         }
     };
     // удаляет все формы
-    var formdelall = function () { form = []; };
-    // переместить формы во внешнюю память    
-    var blockstore = function (name, sarr) {
-        var i, j, f, t, out = [];
-        for (i = 0; i < form.length; i++) {
-            f = form.shift();
-            t = true;
-            for (j = 0; j < sarr.length; j++) {
-                if (f.name === sarr[j]) t = false;
-            }
-            if (t) form.push(f); else out.push(f);
+    var _formdelall = function () { _form = []; };
+        // список форм в памяти через разделитель
+    var _formslist = function(_delimiter) {
+        var _list = '', _i, _dlm = (_delimiter !== '')? _delimiter:' ';
+        for (_i = 0; _i < _form.length; _i++) {
+            _list += ((_i===0)? '':_dlm) + _form[_i]._name;
         }
-        localStorage.setItem('trac_'+name, JSON.stringify(out));
+        return _list;
+    };
+    // возвращает содержимое формы с указанным именем (отладочный json)
+    var _formbody = function(_name) {
+        var _h = _hash(_name), _i;
+        for (_i = 0; _i < _form.length; _i++) {
+            if (_h === _form[_i]._hash && _name === _form[_i]._name) {
+                return '{"name":"'+ _form[_i]._name + 
+                        '"\ufff3"hash":"'+ _form[_i]._hash +
+                        '"\ufff3"id":"' + _form[_i]._id +
+                        '"\ufff3"ptr":"' + _form[_i]._ptr +
+                        '"\ufff3"css":"' + _form[_i]._css +
+                        '"\ufff3"form":"' + _form[_i]._form + '"}';
+            }
+        }
+        return '{"error":"form absent"}';
+    };
+    // переместить формы во внешнюю память    
+    var _blockstore = function (_name, _sarr) {
+        var _i, _j, _f, _t, _out = [];
+        for (_i = 0; _i < _form.length; _i++) {
+            _f = _form.shift();
+            _t = true;
+            for (_j = 0; _j < _sarr.length; _j++) {
+                if (_f._name === _sarr[_j]) _t = false;
+            }
+            if (_t) _form.push(_f); else _out.push(_f);
+        }
+        localStorage.setItem('trac_'+_name, JSON.stringify(_out));
     };
     // загрузить формы из внешней памяти
-    var blockfetch = function (name) {
-        var s = JSON.parse(localStorage.getItem('trac_'+name));
-        if (s) { for (var i = 0; i < s.length; i++) { form.push(s[i]); }}
+    var _blockfetch = function (_name) {
+        var _s = JSON.parse( localStorage.getItem('trac_'+_name));
+        if (_s) { for (var _i = 0; _i < _s.length; _i++) { _form.push(_s[_i]); }}
     };
     // удалить блок во внешней памяти
-    var blockerase = function (name) { localStorage.removeItem('trac_'+name); };
+    var _blockerase = function (_name) { localStorage.removeItem('trac_'+_name); };
     // ищет парную скобку
-    var searchparent = function () {
-        var cnt = 0, go = true, i = 0;
-        while (go) {
-            if (abuf[i] === '(') { cnt++; } else { if (abuf[i] === ')') { if (cnt === 0) return i; else cnt--; } }
-            i++;
-            if (i === abuf.length) { go = false; }
+    var _searchparent = function () {
+        var _cnt = 0, _go = true, _i = 0;
+        while (_go) {
+            if (_abuf[_i] === '(') { _cnt++; } else { if (_abuf[_i] === ')') { if (_cnt === 0) return _i; else _cnt--; } }
+            _i++;
+            if (_i === _abuf.length) { _go = false; }
         }
     };
     // загружает символ
-    var loadc = function () {
-        var res = ibuf[0];
-        ibuf = ibuf.substr(1);
-        return res;
+    var _loadc = function (_z) {
+        if(_ibuf.length === 0) { _Z = true; return _z; }
+        var _res = _ibuf[0];
+        _ibuf = _ibuf.substr(1);
+        return _res;
     };
     // загружает строку ограниченную метасимволом или концом строки
-    var loads = function () {
-        var end = ibuf.indexOf(meta), out;
-        if (end === -1) {
-            end = ibuf.length;
-            out = ibuf.substr(0, end);
-            ibuf = '';
+    var _loads = function (_z) {
+        if(_ibuf.length === 0) { _Z = true; return _z; }
+        var _end = _ibuf.indexOf(_meta), _out;
+        if (_end === -1) {
+            _end = _ibuf.length;
+            _out = _ibuf.substr(0, _end);
+            _ibuf = '';
         } else {
-            out = ibuf.substr(0, end);
-            ibuf = ibuf.substr(end + 1);
+            _out = _ibuf.substr(0, _end);
+            _ibuf = _ibuf.substr(_end + 1);
         }
-        return out;
+        return _out;
     };
     // обработчик встроенных функций
-    var start = function (fstart) {
-        var s = nbuf.substr(fstart + 1).split('\u2551');
-        s.pop();
-        switch (s[0]) {
+    var _start = function (_fstart) {
+        var _s = _nbuf.substr(_fstart + 1).split('\u2551');
+        _s.pop();
+        switch (_s[0]) {
             // общий ввод вывод
-            case 'rs': case 'читать': funcvalue = loads(); return;
-            case 'rc': case 'читатьсимвол': case 'читать символ': funcvalue = loadc(); return;
-            case 'cm': case 'мета': funcvalue = ''; meta = get(s, 1)[0]; return;
-            case 'ps': case 'печать': funcvalue = ''; obuf += get(s, 1); return;
+            case 'rs': case 'читать': _funcvalue = _loads(_get(_s, 1)); return;
+            case 'rc': case 'читатьсимвол': case 'читать символ': _funcvalue = _loadc(_get(_s, 1)); return;
+            case 'cm': _funcvalue = ''; _meta = _get(_s, 1)[0]; return;
+            case 'gm': _funcvalue = _meta; return;
+            case 'ps': case 'печать': _funcvalue = ''; _obuf += _get(_s, 1); return;
                 // работа с формами: пользовательские функции, массивы и т.п.
-            case 'ds': case 'определить': formadd(formlen(), get(s, 1), get(s, 2), 0, 0); funcvalue = ''; return;
-            case 'ss': case 'разбить': var n = get(s, 1); var ss = s; ss.shift(); ss.shift(); formseg(n, ss); funcvalue = ''; return;
-            case 'cl': case 'вызвать': var n = get(s, 1); var ss = s; ss.shift(); ss.shift(); funcvalue = formcall(n, ss); return;
-	    case 'cs': case 'сегмент': funcvalue = formcallseg( get(s, 1), get(s, 2)); return;
-            case 'cc': case 'символ': funcvalue = formcallchr( get(s, 1), get(s, 2)); return;
-            case 'cn': case 'символы': funcvalue = formcallchrs( get(s, 1), get(s, 2), get(s, 3)); return;
-            case 'cr': case 'сначала': formcallrest( get(s, 1)); funcvalue = ''; return;
-            case 'dd': case 'стереть': var ss = s; ss.shift(); formdel(ss); funcvalue = ''; return;
-            case 'da': case 'стеретьвсе': case 'стереть все': formdelall(); funcvalue = ''; return;
+            case 'ds': case 'определить': _formadd(_formlen(), _get(_s, 1), _get(_s, 2), 0, 0); _funcvalue = ''; return;
+            case 'ss': case 'разбить': var _n = _get(_s, 1); var _ss = _s; _ss.shift(); _ss.shift(); _formseg(_n, _ss); _funcvalue = ''; return;
+            case 'cl': case 'вызвать': var _n = _get(_s, 1); var _ss = _s; _ss.shift(); _ss.shift(); _funcvalue = _formcall(_n, _ss); return;
+	    case 'cs': case 'сегмент': _funcvalue = _formcallseg( _get(_s, 1), _get(_s, 2)); return;
+            case 'cc': case 'символ': _funcvalue = _formcallchr( _get(_s, 1), _get(_s, 2)); return;
+            case 'cn': case 'символы': _funcvalue = _formcallchrs( _get(_s, 1), _get(_s, 2), _get(_s, 3)); return;
+            case 'cr': case 'сначала': _formcallrest( _get(_s, 1)); _funcvalue = ''; return;
+            case 'fd': case 'искать': _formsearch(_get(_s, 1),_get(_s, 2),_get(_s, 3)); _funcvalue = ''; return;
+            case 'dd': case 'стереть': var _ss = _s; _ss.shift(); _formdel(_ss); _funcvalue = ''; return;
+            case 'da': case 'стеретьвсе': case 'стереть все': _formdelall(); _funcvalue = ''; return;
                 // арифметика
-            case 'ad': case '+': var a1 = parseFloat(get(s, 1)), a2 = parseFloat(get(s, 2)); if (typeof a1 === 'number' && typeof a2 === 'number') funcvalue = (a1 + a2).toString(); else { funcvalue = get(s, 3); Z = true; } return;
-            case 'su': case '-': var a1 = parseFloat(get(s, 1)), a2 = parseFloat(get(s, 2)); if (typeof a1 === 'number' && typeof a2 === 'number') funcvalue = (a1 - a2).toString(); else { funcvalue = get(s, 3); Z = true; } return;
-            case 'ml': case '*': var a1 = parseFloat(get(s, 1)), a2 = parseFloat(get(s, 2)); if (typeof a1 === 'number' && typeof a2 === 'number') funcvalue = (a1 * a2).toString(); else { funcvalue = get(s, 3); Z = true; } return;
-            case 'dv': case '/': var a1 = parseFloat(get(s, 1)), a2 = parseFloat(get(s, 2)); if (typeof a1 === 'number' && typeof a2 === 'number' && a2 !== 0) funcvalue = (a1 / a2).toString(); else { funcvalue = get(s, 3); Z = true; } return;
-            case 'целое': funcvalue = Math.floor(parseFloat(get(s, 1))); return;
+            case 'ad': case '+': var _a1 = parseFloat(_get(_s, 1)), _a2 = parseFloat(_get(_s, 2)); if (typeof _a1 === 'number' && typeof _a2 === 'number') _funcvalue = (_a1 + _a2).toString(); else { _funcvalue = _get(_s, 3); _Z = true; } return;
+            case 'su': case '-': var _a1 = parseFloat(_get(_s, 1)), _a2 = parseFloat(_get(_s, 2)); if (typeof _a1 === 'number' && typeof _a2 === 'number') _funcvalue = (_a1 - _a2).toString(); else { _funcvalue = _get(_s, 3); _Z = true; } return;
+            case 'ml': case '*': var _a1 = parseFloat(_get(_s, 1)), _a2 = parseFloat(_get(_s, 2)); if (typeof _a1 === 'number' && typeof _a2 === 'number') _funcvalue = (_a1 * _a2).toString(); else { _funcvalue = _get(_s, 3); _Z = true; } return;
+            case 'dv': case '/': var _a1 = parseFloat(_get(_s, 1)), _a2 = parseFloat(_get(_s, 2)); if (typeof _a1 === 'number' && typeof _a2 === 'number' && _a2 !== 0) _funcvalue = (_a1 / _a2).toString(); else { _funcvalue = _get(_s, 3); _Z = true; } return;
+            case 'целое': _funcvalue = Math.floor(parseFloat(_get(_s, 1))); return;
                 // битовые операции
-            case 'bu': funcvalue = ''; return;
-            case 'bi': funcvalue = ''; return;
-            case 'bc': funcvalue = ''; return;
-            case 'bs': funcvalue = ''; return;
-            case 'br': funcvalue = ''; return;
+            case 'bu': _funcvalue = ''; return;
+            case 'bi': _funcvalue = ''; return;
+            case 'bc': _funcvalue = ''; return;
+            case 'bs': _funcvalue = ''; return;
+            case 'br': _funcvalue = ''; return;
                 // управление выполнением
-            case 'eq': case '=': if (get(s, 1) === get(s, 2)) { funcvalue = get(s, 3); } else { funcvalue = get(s, 4); } return;
-            case 'gr': case '>': if (get(s, 1) > get(s, 2)) { funcvalue = get(s, 3); } else { funcvalue = get(s, 4); } return;
+            case 'eq': case '=': if (_get(_s, 1) == _get(_s, 2)) { _funcvalue = _get(_s, 3); } else { _funcvalue = _get(_s, 4); } return;
+            case 'gr': case '>': if (_get(_s, 1) > _get(_s, 2)) { _funcvalue = _get(_s, 3); } else { _funcvalue = _get(_s, 4); } return;
+            case 'lt': case '<': if (_get(_s, 1) < _get(_s, 2)) { _funcvalue = _get(_s, 3); } else { _funcvalue = _get(_s, 4); } return;
                 // интерфейс с внешним хранилищем
-            case 'sb': case 'сохранить': var n = get(s, 1); var ss = s; ss.shift(); ss.shift(); blockstore(n, ss); funcvalue = ''; return;
-            case 'fb': case 'загрузить': blockfetch(get(s, 1)); funcvalue = ''; return;
-            case 'eb': case 'удалить': blockerase(get(s, 1)); funcvalue = ''; return;
+            case 'sb': case 'сохранить': var _n = _get(_s, 1); var _ss = _s; _ss.shift(); _ss.shift(); _blockstore(_n, _ss); _funcvalue = ''; return;
+            case 'fb': case 'загрузить': _blockfetch(_get(_s, 1)); _funcvalue = ''; return;
+            case 'eb': case 'удалить': _blockerase(_get(_s, 1)); _funcvalue = ''; return;
                 // стоп и ноп
-            case 'hl': case 'стоп': funcvalue = ''; worked = false; return;
-            case 'np': funcvalue = get(s, 1); return;
+            case 'hl': case 'стоп': _funcvalue = ''; _worked = false; return;
+                // отладка
+            case 'np': _funcvalue = ''; return;
+            case 'nl': case 'формы': _funcvalue = _formslist(_get(_s,1)); return;
+            case 'pb': case 'форма': _funcvalue = _formbody(_get(_s,1)); return;
                 // экстра
            // case 'сегодня': var t = new Date(); funcvalue = t.getFullYear() + '-' + Lib.add0(t.getMonth() + 1) + '-' + Lib.add0(t.getDate()); return;
            // case 'сейчас': var t = new Date(); funcvalue = t.getHours() + ':' + Lib.add0(t.getMinutes().toString()) + ':' + Lib.add0(t.getSeconds().toString()); return;
+// cn
+// 
 
-            default: var n = s[0]; var ss = s; ss.shift(); funcvalue = formcall(n, ss); return;
+
+            default: var _n = _s[0]; var _ss = _s; _ss.shift(); _funcvalue = _formcall(_n, _ss); return;
         }
     };
     // распознаватель типа функции
-    var gofunc = function () {
-        var fstart = Math.max(nbuf.lastIndexOf('\u2642'), nbuf.lastIndexOf('\u2640'));
-        start(fstart);
-        if (fstart >= 0) {
-            if (nbuf[fstart] === '\u2642') {
-                abuf = funcvalue + abuf;
-                nbuf = nbuf.substr(0, fstart);
-                Z = false;
+    var _gofunc = function () {
+        var _fstart = Math.max(_nbuf.lastIndexOf('\u2642'), _nbuf.lastIndexOf('\u2640'));
+        _start(_fstart);
+        if (_fstart >= 0) {
+            if (_nbuf[_fstart] === '\u2642') {
+                _abuf = _funcvalue + _abuf;
+                _nbuf = _nbuf.substr(0, _fstart);
+                _Z = false;
             } else {
-                if (nbuf[fstart] === '\u2640' && Z === true) {
-                    abuf = funcvalue + abuf;
-                    nbuf = nbuf.substr(0, fstart);
-                    Z = false;
+                if (_nbuf[_fstart] === '\u2640' && _Z === true) {
+                    _abuf = _funcvalue + _abuf;
+                    _nbuf = _nbuf.substr(0, _fstart);
+                    _Z = false;
                 } else {
-                    if (nbuf[fstart] === '\u2640' && Z === false) {
-                        nbuf = nbuf.substr(0, fstart) + funcvalue;
-                        Z = false;
+                    if (_nbuf[_fstart] === '\u2640' && _Z === false) {
+                        _nbuf = _nbuf.substr(0, _fstart) + _funcvalue;
+                        _Z = false;
                     } else {
-                        nbuf = nbuf.substr(0, fstart);
+                        _nbuf = _nbuf.substr(0, _fstart);
                     }
                 }
             }
         }
     };
     // интерпретатор
-    var interpret = function () {
-        while (worked) {
-            if (abuf.length === 0) {
-                nbuf = '';
-                abuf = idle;
-                pc = 0;
-                Z = false;
+    var _interpret = function () {
+        while (_worked) {
+            if (_abuf.length === 0) {
+                _abuf = _idle;
+                _Z = false;
             } else {
-                if (c1() === '(') {
-                    next();
-                    var parent = searchparent();
-                    nbuf += abuf.substr(0, parent);
-                    abuf = abuf.substr(parent + 1);
+                if (_c1() === '(') {
+                    _next();
+                    var _parent = _searchparent();
+                    _nbuf += _abuf.substr(0, _parent);
+                    _abuf = _abuf.substr(_parent + 1);
                 } else {
-                    if (c1() === '\r' || c1() === '\n' || c1() === '\t') {
-                        next();
+                    if (_c1() === '\r' || _c1() === '\n' || _c1() === '\t') {
+                        _next();
                     } else {
-                        if (c1() === ',') {
-                            next();
-                            nbuf += '\u2551';
+                        if (_c1() === ',') {
+                            _next();
+                            _nbuf += '\u2551';
                         } else {
-                            if (c1() === '#' && c2() === '#' && c3() === '(') {
-                                next(3);
-                                nbuf += '\u2640';
+                            if (_c1() === '#' && _c2() === '#' && _c3() === '(') {
+                                _next(3);
+                                _nbuf += '\u2640';
                             } else {
-                                if (c1() === '#' && c2() === '(') {
-                                    next(2);
-                                    nbuf += '\u2642';
+                                if (_c1() === '#' && _c2() === '(') {
+                                    _next(2);
+                                    _nbuf += '\u2642';
                                 } else {
-                                    if (c1() === ')') {
-                                        next();
-                                        nbuf += '\u2551\ufd3f';
-                                        gofunc();
+                                    if (_c1() === ')') {
+                                        _next();
+                                        _nbuf += '\u2551\ufd3f';
+                                        _gofunc();   
                                     } else {
-                                        nbuf += c1();
-                                        next();
+                                        _nbuf += _c1();
+                                        _next();
                                     }
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
     };
     // внешний интерфейс, съедает строку программы возвращает строку результата
-    var run = function (input) {
-        ibuf = input + '#(hl)';
-        obuf = '';
-        worked = true;
-        interpret();
-        return obuf;
+    // после его работы созданные и измененные формы по прежнему хранятся и
+    // могут использоваться при следующих запусках интерфейса
+    var _run = function (_input) {
+        _ibuf = _input + '#(hl)';
+        _abuf = _idle;
+        _nbuf = '';
+        _obuf = '';
+        _worked = true;
+        _interpret();
+        return _obuf;
+    };
+    // инициалиизация если надо перезапустить машину полностью, сбросить формы и т.д.
+    var _reset = function() {
+        _ibuf = '';
+        _abuf = '';
+        _nbuf = '';
+        _form = [];
+        _obuf = '';
+        _worked = true;
+        _idle = '#(ps,#(rs))';
+        _Z = false;
+        _meta = '`';
+        _funcvalue = '';
     };
     // перекодировка входных строк так чтобы их содержимое не воспринималось как trac код
-    var codeTo = function (s) {
-        return s.replace('#','\ufff0').replace('(','\ufff1').replace(')','\ufff2').replace(',','\ufff3').replace(meta,'\ufff4');
+    var _codeTo = function (_s) {
+        return _s.replace('#','\ufff0').replace('(','\ufff1').replace(')','\ufff2').replace(',','\ufff3').replace(_meta,'\ufff4');
     };
     // перекодировка выходной строки, возвращающая на место используемые trac символы
-    var codeFrom = function (s) {
-        return s.replace('\ufff0','#').replace('\ufff1','(').replace('\ufff2',')').replace('\ufff3',',').replace('\ufff4',meta);
+    var _codeFrom = function (_s) {
+        return _s.replace('\ufff0','#').replace('\ufff1','(').replace('\ufff2',')').replace('\ufff3',',').replace('\ufff4',_meta);
     };
     
-    return Object.freeze({run:run,reset:reset,codeTo:codeTo,codeFrom:codeFrom});
+    // фиксируем доступные снаружи методы
+    return Object.freeze({run:_run,reset:_reset,codeTo:_codeTo,codeFrom:_codeFrom});
 }
     
 // программа тестирования интерпретатора
@@ -364,10 +409,9 @@ function Trac() {
 
 /* Типовые операции
 
- присваивание константы   var name = value
- #(ds,name,value)`
+ #(ds,name,value)`(присваивание константы: var name = value)`
 
- использование переменной  name
+ значение переменной  name
  #(name)
 
  инкремент переменной  name++
@@ -377,20 +421,32 @@ function Trac() {
  #(ds,name,expression)`
 
  определение функции func name(param1, param2) <- expression
- #(ds,name,(expression))#(ss,param1,param2)`
+ #(ds,name,(expression))#(ss,name,param1,param2)`
 
  вызов функции    name(param1,param2)
  #(name,param1,param2)`
 
- условное ветвление if(condition,trueexpression,falseexpression)
+ условное ветвление if(condition==0,trueexpression,falseexpression)
  #(eq,condition,0,falseexpression,trueexpression)`
 
- цикл по условию while(condition, expression)
+ цикл по условию while(condition==0, expression)
  #(ds,tempname,(#(eq,condition,0,expression#(tempname),)))`#(tempname)`#(dd,tempname)`
 
  цикл по счетчику for(startcount,endcount, expression)
  #(ds,tempvar,(startcount))#(ds,tempname,(#(eq,tempvar,endcount,,expression#(ds,tempvar,#(ad,#(tempvar),1)))#(tempname))))`#(tempname)`#(dd,tempvar,tempname)`
+ 
+ рекурсия
+ #(ds,Factorial,(#(eq,1,X,1,(#(ml,X,#(Factorial,#(ad,X,-1)))))))#(ss,Factorial,X)`#(Factorial,5)`
+ 
+ html шаблон
+ #(ds,div,(#(ps,<div style='background-color:#0A0;width:30px;height:30px;'>text</div>)))`#(ss,div,text)` #(div,123)`(comment)'
+
+ последовательное посимвольное чтение из строки
+ #(ds,line,0123456789abcdef)#(cr,line)`#(ps,#(cc,line))`#(ps,#(cc,line))`#(ps,#(cc,line))`#(ps,#(cn,line,5))`
+    
+ последовательное построчное чтение из массива строк
+ #(ds,line,012/34567/89abcd/ef)#(cr,line)#(ss,line,/)`#(ps,#(cs,line))#(ps,-))#(ps,#(cs,line))#(ps,-))#(ps,#(cs,line))`
+    
+ 
 
  */
-
-

@@ -1,6 +1,6 @@
 var $ = this.u$;
 
-var trac = new Trac();
+var trac = new _Trac();
 var rpn = new Rpn();
 
 function go() {
